@@ -1,0 +1,25 @@
+{% extends "base_test.html" %}
+
+{% block content %}
+<h1>All Requests</h1>
+
+{% for i in create %}
+<h2> Create New Request</h2>
+<p>You have no open requests.</p>
+<a href="/uap_app/tutee/new_request/"> CREATE NEW REQUEST </a>
+{% endfor %}
+
+{% for proj in p %}
+<h2>Current</h2>
+<h3><a href = "/uap_app/tutee/request_{{proj.id}}">{{ proj.title }}</a></h3>
+<p>{{proj.description}}</p>
+{% endfor %}
+
+
+<h2>Previous </h2>
+{% for project in projects %}
+<h3><a href = "/uap_app/tutee/request_{{project.id}}">{{ project.title }}</a></h3>
+<p>{{project.description}}</p>
+{% endfor %}
+
+{% endblock %}

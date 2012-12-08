@@ -1,0 +1,15 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+{% for c in coaches %}
+<div style="background-color: lightgray" class="span-7">
+<h3><a href = "#">{{c.user.username}}: {{c.user.first_name}} {{c.user.last_name}}</a></h3>
+{{c.user.email}}<br>
+CS-support: {{c.cs_help}}<br>
+EE-support: {{c.ee_help}}
+
+</div>
+{% endfor %}
+
+{% endblock %}

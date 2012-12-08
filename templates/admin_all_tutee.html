@@ -1,0 +1,17 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+{% for t in tutees %}
+<div style="background-color: lightgray" class="span-7">
+<h3><a href = "#">{{t.user.username}}: {{t.user.first_name}} {{t.user.last_name}}</a></h3>
+{{t.user.email}}<br>
+Research Advisor: {{t.research_advisor}}<br>
+Concentration: {{t.area_of_interest}}<br>
+CS-related: {{t.cs_request}}<br>
+EE-related: {{t.ee_request}}
+
+</div>
+{% endfor %}
+
+{% endblock %}

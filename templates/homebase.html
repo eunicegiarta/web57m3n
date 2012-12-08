@@ -1,0 +1,40 @@
+{% extends "base_test.html" %}
+
+{% block home %} class="selected"{% endblock %}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+	<div class="span-4"><p></p></div>
+<div class="example1 pdding prepend-top span-16 last append-bottom">
+	<h1>HOME</h1>
+
+	<p>
+	you are logged in as {{request.user}}
+	</p>
+	{% if current %}
+	<form>
+		<button>CURRENT </button>
+	</form>
+	{% endif %}
+	
+	{% if new %}
+	{% for n in new %}
+	<form>
+		<button>CREATE NEW </button>
+	</form>
+	{% endfor %}
+	{% endif %}
+	
+</div>
+<div class="span-4"><p></p></div>
+</div>
+
+{% endblock %}

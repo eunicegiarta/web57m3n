@@ -1,0 +1,40 @@
+{% extends "base_coach.html" %}
+
+{% block content %}
+<h2>Tutee</h2>
+<p>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</p>
+<h2>{{p.title}}</h2>
+<h4>Description</h4>
+<p>{{p.description}}</p>
+<h4>Presentation Date</h4>
+<p>{{p.date_of_interest}}</p>
+<h4>Status</h4>
+<p>{{stat}}</p>
+
+
+{% for j in details %}
+<h3>Meeting Details</h3>
+<h4>Date </h4>
+<p>{{p.meeting_date}}</p>
+<h4>Summary</h4>
+<p>{{p.meeting_details}}</p>
+<h4>Duration</h4>
+<p>{{p.meeting_duration}} minutes</p>
+<h4>Video</h4>
+<p>{{p.video}}</p>
+{% endfor %}
+
+{% for i in to_submit %}
+<a href="/uap_app/coach/submit_meeting_details/request_{{p.id}}"> SUBMIT MEETING DETAILS </a>
+{% endfor %}
+
+{% for w in withdraw %}
+<p>If for some reason you cannot fulfill your duties as a Coach for this request, you may withdraw from this assignment:</p>
+<form action="" method="POST">
+	{% csrf_token %}
+	{{ form.as_p}}
+<input type="submit" value="Withdraw Assignment as Coach" />
+</form>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Course 6 Communications Center</title>
+	<link rel="stylesheet" href="{{STATIC_URL}}blueprint/print.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="{{STATIC_URL}}blueprint/screen_test.css" type="text/css" media="screen" />
+<style type="text/css">
+
+body {background-color:#F9F5F1; 
+	background-image: url("{{STATIC_URL}}images/header.png"); 
+	background-repeat: repeat-x;
+	margin-left: auto;
+	margin-right: auto;}
+.menu ul
+{
+	position: relative;
+	top: 60px;
+list-style-type:none;
+margin:0;
+padding:0;
+overflow:hidden;
+}
+.menu li
+{
+float:left;
+}
+.menu a
+{
+display:block;
+width:100px;
+background-color:#dddddd;
+text-decoration: none;
+color: black;
+}
+#content
+{
+position: absolute;
+top: 115px;
+min-height: 500px;
+background-color: ;
+}
+.menu {
+	height: 90px;
+	color: black;
+	text-align: center;
+}
+#homeicon {
+	position: relative;
+	top: 20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">	
+<div class="column span-24">
+	<div class = "menu column span-7 ">
+		<img id="homeicon" src="{{STATIC_URL}}images/cscc.png"/>
+	</div>
+	<div class="menu column span-17 last">
+		<ul>
+			<li><a href="/uap_app/admin/home">HOME</a></li>
+			<li><a href="/uap_app/admin/view_requests/">REQUESTS</a></li>
+			<li><a href="/uap_app/admin/view_tutee/">TUTEES</a></li>
+			<li><a href="/uap_app/admin/view_coach/">COACHES</a></li>
+			<li><a href="/uap_app/admin/profile/">PROFILE</a></li>
+			<li><a href="/uap_app/logout">LOGOUT</a></li>
+		</ul>
+	</div>
+</div>
+	<div id="content" class="column span-24 last">
+		{% block content %}
+		{% endblock %}
+	</div>
+</div>
+</body>
+
+</html>

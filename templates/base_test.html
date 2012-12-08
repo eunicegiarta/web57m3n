@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Course 6 Communications Center</title>
+	<link rel="stylesheet" href="{{STATIC_URL}}blueprint/print.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="{{STATIC_URL}}blueprint/screen_test.css" type="text/css" media="screen" />
+<style type="text/css">
+
+.login label {
+    width:150px;
+    margin-top: 3px;
+    display:inline-block;
+    float:left;
+    padding:3px;
+}
+.login input {
+    height:20px;
+    padding:5px 8px;
+	width: 165px;
+}
+
+.login input, .login textarea {
+    border:1px solid #aaa;
+    border-radius:2px;
+}
+.login input:focus, .contact_form textarea:focus {
+    background: #fff;
+    border:1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+}
+/* Button Style */
+button.submit {
+	margin-left: auto;
+	margin-right: auto;
+	width: 200px;
+    background-color: #68b12f;
+    background: -webkit-gradient(linear, left top, left bottom, from(#68b12f), to(#50911e));
+    background: -webkit-linear-gradient(top, #68b12f, #50911e);
+    background: -moz-linear-gradient(top, #68b12f, #50911e);
+    background: -ms-linear-gradient(top, #68b12f, #50911e);
+    background: -o-linear-gradient(top, #68b12f, #50911e);
+    background: linear-gradient(top, #68b12f, #50911e);
+    border: 1px solid #509111;
+    border-bottom: 1px solid #5b992b;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    box-shadow: inset 0 1px 0 0 #9fd574;
+    -webkit-box-shadow: 0 1px 0 0 #9fd574 inset ;
+    -moz-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -ms-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -o-box-shadow: 0 1px 0 0 #9fd574 inset;
+    color: white;
+    font-weight: bold;
+    padding: 6px 20px;
+    text-align: center;
+    text-shadow: 0 -1px 0 #396715;
+}
+button.submit:hover {
+    opacity:.85;
+    cursor: pointer;
+}
+button.submit:active {
+    border: 1px solid #20911e;
+    box-shadow: 0 0 10px 5px #356b0b inset;
+    -webkit-box-shadow:0 0 10px 5px #356b0b inset ;
+    -moz-box-shadow: 0 0 10px 5px #356b0b inset;
+    -ms-box-shadow: 0 0 10px 5px #356b0b inset;
+    -o-box-shadow: 0 0 10px 5px #356b0b inset;
+}
+.pdding {
+	padding: 20px;
+}
+
+.center {
+	float: none;
+	display: block;
+	margin: 0px auto;
+}
+
+#id_subject {
+	width: 380px;
+}
+
+body {background-color:#F9F5F1; 
+	background-image: url("{{STATIC_URL}}images/header.png"); 
+	background-repeat: repeat-x;
+	margin-left: auto;
+	margin-right: auto;}
+.menu ul
+{
+	position: relative;
+	top: 29px;
+list-style-type:none;
+margin:0;
+padding:0;
+overflow:hidden;
+}
+.menu li
+{
+float:right;
+}
+.menu a
+{
+display:block;
+width:110px;
+height: 30px;
+background-color:#dddddd;
+background: rgb(24, 24, 24) transparent; /* default fallback */
+background: rgba(24, 24, 24, 0.05); /* nice browsers */
+text-decoration: none;
+display: table-cell;
+vertical-align: middle;
+color: black;
+}
+
+.menu a:hover {
+	background: rgb(150, 21, 21) transparent; /* default fallback */
+	background: rgba(150, 21, 21, 0.6); /* nice browsers */	
+	color: white;
+}
+
+.selected a{
+	background-color: #961515;
+	color: white;
+}
+
+#content
+{
+position: absolute;
+top: 115px;
+min-height: 500px;
+background-color: ;
+}
+.menu {
+	height: 90px;
+	color: black;
+	text-align: center;
+}
+#homeicon {
+	position: relative;
+	top: 20px;
+}
+
+.example1 {
+-moz-border-radius: 15px;
+border-radius: 15px;
+border: 1px solid;
+border-color: DarkGray;
+background-color: WhiteSmoke;
+background: rgb(24, 24, 24) transparent; /* default fallback */
+background: rgba(24, 24, 24, 0.05); /* nice browsers */
+}
+
+#name_text{
+	position: relative;
+	top: 20px;
+	align: right;
+}
+
+{% block scripts %}{% endblock %}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">	
+<div class="column span-24">
+	<div class = "menu column span-7 ">
+		<img id="homeicon" src="{{STATIC_URL}}images/cscc.png"/>
+	</div>
+	<div class="span-17 last">
+		<div align="right" id="name_text"class="span-17 last">
+			<p><b>TUTEE | {{user.username}}</b>, {{user.first_name}} {{user.last_name}}</p>
+		</div>
+	<div class="menu  span-17">
+		<ul>
+			<li {% block logout %}{% endblock %}><a href="/uap_app/logout">LOGOUT</a></li>
+			<li {% block report %}{% endblock %}><a href="/uap_app/tutee/report/">REPORT</a></li>
+			<li {% block profile %}{% endblock %}><a href="/uap_app/tutee/profile/">PROFILE</a></li>
+			<li {% block requests %}{% endblock %}><a href="/uap_app/tutee/requests/">REQUESTS</a></li>
+			<li {% block home %}{% endblock %}><a href="/uap_app/tutee/home">HOME</a></li>
+		</ul>
+	</div>
+	</div>
+</div>
+	<div id="content" class="column span-24 last">
+		{% block content %}
+		{% endblock %}
+	</div>
+</div>
+</body>
+
+</html>

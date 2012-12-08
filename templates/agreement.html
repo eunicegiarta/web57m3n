@@ -1,0 +1,154 @@
+{% extends "basecase.html" %}
+
+{% block scripts %}
+
+input {
+    height:20px;
+    padding:5px 8px;
+	width: 165px;
+}
+
+input,  textarea {
+    border:1px solid #aaa;
+    border-radius:2px;
+}
+input:focus, .contact_form textarea:focus {
+    background: #fff;
+    border:1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+}
+/* Button Style */
+button.submit {
+	margin-left: auto;
+	margin-right: auto;
+	width: 200px;
+    background-color: #68b12f;
+    background: -webkit-gradient(linear, left top, left bottom, from(#68b12f), to(#50911e));
+    background: -webkit-linear-gradient(top, #68b12f, #50911e);
+    background: -moz-linear-gradient(top, #68b12f, #50911e);
+    background: -ms-linear-gradient(top, #68b12f, #50911e);
+    background: -o-linear-gradient(top, #68b12f, #50911e);
+    background: linear-gradient(top, #68b12f, #50911e);
+    border: 1px solid #509111;
+    border-bottom: 1px solid #5b992b;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    box-shadow: inset 0 1px 0 0 #9fd574;
+    -webkit-box-shadow: 0 1px 0 0 #9fd574 inset ;
+    -moz-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -ms-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -o-box-shadow: 0 1px 0 0 #9fd574 inset;
+    color: white;
+    font-weight: bold;
+    padding: 6px 20px;
+    text-align: center;
+    text-shadow: 0 -1px 0 #396715;
+	float: none;
+	display: block;
+	margin: 0px auto;
+}
+button.submit:hover {
+    opacity:.85;
+    cursor: pointer;
+}
+button.submit:active {
+    border: 1px solid #20911e;
+    box-shadow: 0 0 10px 5px #356b0b inset;
+    -webkit-box-shadow:0 0 10px 5px #356b0b inset ;
+    -moz-box-shadow: 0 0 10px 5px #356b0b inset;
+    -ms-box-shadow: 0 0 10px 5px #356b0b inset;
+    -o-box-shadow: 0 0 10px 5px #356b0b inset;
+}
+.pdding {
+	padding: 20px;
+}
+
+#id_subject {
+	width: 380px;
+}
+
+{% endblock %}
+
+{% block signup %}class="selected"{% endblock %}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+<div class="example1 pdding preprend-1 span-22 append-1 prepend-top append-bottom">
+	<h2><b>Agreement Guidelines for CSCC Coaching</b></h2>
+
+	<p>Welcome to the pilot of this free program in which EECS undergraduates help give feedback on your oral presentation.</p>
+
+
+	<p>Upon creation of a presentation meeting request, you will be randomly matched with an EECS undergraduate coach.   Then you should:</p>
+
+	
+		<ul>1) Contact the coach to arrange a 1.5 hour meeting.<br>
+		2) Contact Tony to arrange for a 0.5 hour meeting that will take place asap after you meet with the coach.<br>
+		3) Reserve a room with an LCD projector.<br>
+		4) Meet with your coach for at most 1.5 hours.<br>
+		5) Meet with Tony for 0.5 hours. </ul>
+
+	
+
+	<p>What will happen when you meet with your coach:</p>
+
+<ul>	- Please set up and be ready to present at the start of the meeting.<br>
+
+	- You will do a dryrun of your talk (if a conference talk, usually 15-20 minutes)<br>
+
+	- This talk will be recorded, and the video will be made available to you afterwards.<br>
+
+	- After your dryrun, the coach will give you feedback, focusing on delivery.  They may have you redo parts of the talk to reinforce some ideas.<br>
+
+	- Your advisor and research group are the primary source of feedback on the content of your talk, but the coach may comment things like:
+
+<ul>	what was unclear to them?<br>
+
+	where they inflected (phased out)?<br>
+
+	how the visuals might be improved?<br>
+
+	how signposting might help?</ul>
+
+
+
+
+<p>
+	I understand that this service is made freely available, and there is no guarantee that I'll be matched with a coach. <br>
+
+	I understand that the coach would be an undergraduate majoring in EECS, but may not be familiar with my specific research area. <br>
+
+	I understand that the coach's comments are subjective, based on how the presentation was perceived by them.   <br>
+
+	I understand that the coach will give me some ideas and suggestions for how I might be able to improve the talk. <br>
+
+	I understand that a single session will not transform me into a perfect speaker overnight;  public speaking improves over time with intentional practice.<br>
+
+	I understand that I will be videotaped.  This video will not be publicly released, but may be used by Tony Eng to evaluate the effectiveness of the program.<br>
+
+	I understand that the coaching session is at most 1.5 hours, and that if I cannot make it, I will let the coach know ASAP.<br>
+
+	I understand that if I fail to meet with Tony, I will be ineligible to participate in this program in the future.<br>
+
+	I understand that EECS may contact me after my actual talk, and agree to answer any followup survey questions about how the utility of the coaching session.<br>
+
+</p>
+<form class="signup" action="/uap_app/tutee/signup/validate" method="post">
+	{% csrf_token %}
+	{{form.as_p}}
+	<button style="width: 300px;" id="submit" class="submit span-4" type="submit" value="submit">COMPLETE SIGN UP </button>
+</form>
+</div>
+</div>
+{% endblock %}

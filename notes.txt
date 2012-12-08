@@ -1,0 +1,5 @@
+coaching_session
+-title, presentation date
+-preparation_status: preparedness and when
+-date is: coming_up, later_in_future, post_feedback (talk already occurred)
+

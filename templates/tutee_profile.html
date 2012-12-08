@@ -1,0 +1,21 @@
+{% extends "base_test.html" %}
+
+{% block content %}
+{% if messages%}
+{%for message in messages%}
+<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+{%endfor%}
+{%endif%}
+<h1>Profile</h1>
+
+<p>Name: {{u.first_name}} {{u.last_name}}</p>
+<p>Username:  {{u.username}}</p>
+
+<form action="" method="POST">
+	{% csrf_token %}
+{{form.as_p}}
+<input type="submit" value="Update" />
+</form>
+
+
+{% endblock%}

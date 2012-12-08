@@ -1,0 +1,33 @@
+{% extends "base_test.html" %}
+
+{% block content %}
+<h2>{{p.title}}</h2>
+<h4>Description</h4>
+<p>{{p.description}}</p>
+<h4>Presentation Date</h4>
+<p>{{p.date_of_interest}}</p>
+<h4>Status</h4>
+<p>{{stat}}</p>
+
+<h4>Coach</h4>
+<p>{{p.coach}}</p>
+
+{% for j in details %}
+<h3>Meeting Details</h3>
+<h4>Date </h4>
+<p>{{p.meeting_date}}</p>
+<h4>Summary</h4>
+<p>{{p.meeting_details}}</p>
+<h4>Duration</h4>
+<p>{{p.meeting_duration}} minutes</p>
+<h4>Video</h4>
+<p>{{p.video}}</p>
+{% endfor %}
+
+{% for i in confirm %}
+<form action="" method="post" data-ajax="false">
+	<input id="submit" type="submit" value="Confirm Details">
+</form>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<h2> Needs Coach Assignment</h2>
+{% for p in to_assign %}
+<div style="background-color: lightgrey">
+<h3><a href = "/uap_app/admin/request_{{p.id}}">{{ p.title }}</a></h3>
+<p>{{p.description}}</p>
+<h4><a href = "/uap_app/admin/assign_request_{{p.id}}">ASSIGN COACH</a></h4>
+</div>
+
+
+{% endfor %}
+
+<h2> Open Request (Assigned to Coach)</h2>
+{% for p in assigned %}
+<div style="background-color: lightgrey">
+<h3><a href = "/uap_app/admin/request_{{p.id}}">{{ p.title }}</a></h3>
+<p>{{p.description}}</p>
+</div>
+{% endfor %}
+
+<h2> Meeting Details Submitted by Coach</h2>
+{% for p in submitted %}
+<div style="background-color: lightgrey">
+<h3><a href = "/uap_app/admin/request_{{p.id}}">{{ p.title }}</a></h3>
+<p>{{p.description}}</p>
+</div>
+{% endfor %}
+
+<h2> Needs Approval, Meeting Confirmed</h2>
+{% for p in to_approve %}
+<div style="background-color: lightgrey">
+<h3><a href = "/uap_app/admin/request_{{p.id}}">{{ p.title }}</a></h3>
+<p>{{p.description}}</p>
+</div>
+{% endfor %}
+
+<h2> Closed Requests</h2>
+{% for p in old %}
+<div style="background-color: lightgrey">
+<h3><a href = "/uap_app/admin/request_{{p.id}}">{{ p.title }}</a></h3>
+<p>{{p.description}}</p>
+</div>
+{% endfor %}
+
+
+{% endblock %}

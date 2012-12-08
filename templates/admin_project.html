@@ -1,0 +1,15 @@
+{% extends "base_admin.html" %}
+
+
+
+{% block content %}
+{% if messages%}
+{%for message in messages%}
+{% endfor %}
+{% endif %}
+<form action="" method="post" data-ajax="false">
+	{% csrf_token %}
+{{form.as_p}}
+	<input id="submit" type="submit" value="Update Request">
+</form>
+{% endblock %}

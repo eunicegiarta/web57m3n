@@ -1,0 +1,117 @@
+{% extends 'basecase.html' %}
+
+{% block scripts %}
+
+label {
+    width:150px;
+    margin-top: 3px;
+    display:inline-block;
+    float:left;
+    padding:3px;
+}
+
+
+input {
+    height:20px;
+    padding:5px 8px;
+	width: 165px;
+}
+
+input, .login textarea {
+    border:1px solid #aaa;
+    border-radius:2px;
+}
+input:focus, .contact_form textarea:focus {
+    background: #fff;
+    border:1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+}
+/* Button Style */
+button.submit {
+    background-color: #68b12f;
+    background: -webkit-gradient(linear, left top, left bottom, from(#68b12f), to(#50911e));
+    background: -webkit-linear-gradient(top, #68b12f, #50911e);
+    background: -moz-linear-gradient(top, #68b12f, #50911e);
+    background: -ms-linear-gradient(top, #68b12f, #50911e);
+    background: -o-linear-gradient(top, #68b12f, #50911e);
+    background: linear-gradient(top, #68b12f, #50911e);
+    border: 1px solid #509111;
+    border-bottom: 1px solid #5b992b;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    box-shadow: inset 0 1px 0 0 #9fd574;
+    -webkit-box-shadow: 0 1px 0 0 #9fd574 inset ;
+    -moz-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -ms-box-shadow: 0 1px 0 0 #9fd574 inset;
+    -o-box-shadow: 0 1px 0 0 #9fd574 inset;
+    color: white;
+    font-weight: bold;
+    padding: 6px 20px;
+    text-align: center;
+    text-shadow: 0 -1px 0 #396715;
+	float: none;
+	display: block;
+	margin: 0px auto;
+}
+
+button.submit:hover {
+    opacity:.85;
+    cursor: pointer;
+}
+button.submit:active {
+    border: 1px solid #20911e;
+    box-shadow: 0 0 10px 5px #356b0b inset;
+    -webkit-box-shadow:0 0 10px 5px #356b0b inset ;
+    -moz-box-shadow: 0 0 10px 5px #356b0b inset;
+    -ms-box-shadow: 0 0 10px 5px #356b0b inset;
+    -o-box-shadow: 0 0 10px 5px #356b0b inset;
+}
+.pdding {
+	padding: 20px;
+}
+
+{% endblock %}
+
+{% block home %} class="selected"{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="span-2"><p></p></div>
+<div class="span-7">
+<div class="pdding example1 prepend-1 span-6 append-1 prepend-top append-bottom">
+	<h3><b> Registered Users </b></h3>
+	<form class="login" action="/accounts/login/" method="post" data-ajax="false">
+		{% csrf_token %}
+		<p>
+			<label>Username</label>
+			<input type="text" name="username" id="username"></input>
+		</p>
+		<p>
+			<label>Password</label>
+				<input type="password" name="password" id="usernames"></input>
+		</p>
+		<button id="submit" class="submit span-4" type="submit" value="submit">SIGN IN </button>
+	</form>
+</div>
+<div class="pdding example1 prepend-1 span-6 append-1 prepend-top append-bottom">
+	<h3><b>Undergraduate?</b></h3>
+	<p>Make your contribution to the Course Six Communication Center online community as a Coach!</p>
+	<form class="login" action="/coach/request/" method="post">
+		<button id="submit" class="submit span-4" type="submit" value="submit">APPLY TO COACH</button>
+	</form>
+</div>
+</div>
+<div class="span-1"><p></p></div>
+<div class="example1 pdding prepend-1 span-11 prepend-top append-bottom last">
+	<h2> Graduate Student and new to CSCC?  Signing up is <b>easy</b>!</h2>
+	<form class="signup" action="/uap_app/tutee/agreement/" method="post">
+		{% csrf_token %}
+	{{form.as_p}}
+	<button style="width: 300px;" id="submit" class="submit span-4" type="submit" value="submit">SIGN UP </button>
+	</form>
+</div>
+</div>
+{% endblock %}

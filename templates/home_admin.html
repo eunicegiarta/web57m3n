@@ -1,0 +1,15 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+{% if messages%}
+{%for message in messages%}
+    <li style="background:#aef18d; color:green" class="success" id="success_id success" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+{%endfor%}
+{%endif%}
+<h1>HOME</h1>
+
+<p>
+you are logged in as {{request.user}}
+</p>
+
+{% endblock %}

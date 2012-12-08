@@ -1,0 +1,30 @@
+{% extends 'basecase.html' %}
+
+{% block signup %}class="selected"{%endblock%}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if form.subject.errors %}
+    <ol>
+    {% for error in form.subject.errors %}
+        <li><strong>{{ error|escape }}</strong></li>
+    {% endfor %}
+    </ol>
+{% endif %}
+<div class="container">
+	<div class="login example1 pdding prepend-4 span-16">
+		<form class="signup" action="/uap_app/tutee/agreement/" method="post">
+			{% csrf_token %}
+			{{form.as_p}}
+			<button style="width: 300px;" id="submit" class="submit span-4" type="submit" value="submit">SIGN UP </button>
+		</form>
+	</div>
+</div>
+	
+{% endblock %}

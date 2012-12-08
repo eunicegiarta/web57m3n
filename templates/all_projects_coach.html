@@ -1,0 +1,26 @@
+{% extends "base_coach.html" %}
+
+{% block content %}
+<h1>All Requests</h1>
+
+
+<h2> Open Requests</h2>
+{% for i in open_projects %}
+<h3><a href = "/uap_app/coach/request_{{i.id}}">{{ i.title }}</a></h3>
+<p>{{i.description}}</p>
+{% endfor %}
+
+<h2>Submitted, Pending Requests</h2>
+{% for proj in pending %}
+<h3><a href = "/uap_app/coach/request_{{proj.id}}">{{ proj.title }}</a></h3>
+<p>{{proj.description}}</p>
+{% endfor %}
+
+
+<h2>Closed Requests</h2>
+{% for project in prev_projects %}
+<h3><a href = "/uap_app/coach/request_{{project.id}}">{{ project.title }}</a></h3>
+<p>{{project.description}}</p>
+{% endfor %}
+
+{% endblock %}

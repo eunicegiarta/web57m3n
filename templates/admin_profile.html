@@ -1,0 +1,15 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<p><b>Username: </b>{{u.username}}</p>
+<p><b>Name: </b>{{u.first_name}} {{u.last_name}}</p>
+
+<form action="" method="POST">
+	{% csrf_token %}
+{{form.as_p}}
+
+<input type="submit" value="Update Profile" />
+</form>
+
+{% endblock %}
