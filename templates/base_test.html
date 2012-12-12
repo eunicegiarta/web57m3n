@@ -160,8 +160,18 @@ background: rgba(24, 24, 24, 0.05); /* nice browsers */
 	align: right;
 }
 
+input:-moz-placeholder {
+    color: gray;
+}
+input::-webkit-input-placeholder {
+    color: gray;
+}
 {% block scripts %}{% endblock %}
 </style>
+
+<script type="text/javascript">
+{% block js %}{% endblock %}
+</script>
 
 </head>
 
@@ -181,7 +191,7 @@ background: rgba(24, 24, 24, 0.05); /* nice browsers */
 			<li {% block logout %}{% endblock %}><a href="/uap_app/logout">LOGOUT</a></li>
 			<li {% block report %}{% endblock %}><a href="/uap_app/tutee/report/">REPORT</a></li>
 			<li {% block profile %}{% endblock %}><a href="/uap_app/tutee/profile/">PROFILE</a></li>
-			<li {% block requests %}{% endblock %}><a href="/uap_app/tutee/requests/">REQUESTS</a></li>
+			<li {% block requests %}{% endblock %}><a href="/uap_app/tutee/requests/">TICKETS</a></li>
 			<li {% block home %}{% endblock %}><a href="/uap_app/tutee/home">HOME</a></li>
 		</ul>
 	</div>

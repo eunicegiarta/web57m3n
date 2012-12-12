@@ -1,33 +1,70 @@
 {% extends "base_test.html" %}
+{% block scripts %}
+h3 {
+	color: gray
+}
+{% endblock %}
+
+{% block js %}
+
+function confirmation() {
+	var answer = confirm("Are you sure you want to cancel this ticket?")
+	if (answer){
+		window.location.href = "google.com";
+	}
+	else{
+		window.location = "localhost:8000/uap_app/tutee/ticket_{{p.id}}";
+		}
+}
+
+{% endblock %}
+
+{% block requests %}class="selected"{% endblock %}
 
 {% block content %}
-<h2>{{p.title}}</h2>
-<h4>Description</h4>
-<p>{{p.description}}</p>
-<h4>Presentation Date</h4>
-<p>{{p.date_of_interest}}</p>
-<h4>Status</h4>
-<p>{{stat}}</p>
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<div class="span-6"><h1><b>ticket details</b></h1></div>
+		<div class="span-5">
+		<form action="/uap_app/tutee/ticket_{{p.id}}/cancel/" method="post">
+			{% csrf_token %}
+			<button id="submit"  class="submit span-6" type="submit" value="submit">CANCEL TICKET</button>
+		</form></div>
+		<hr>
+	<h3 align="center"><b>title</b></h3>
+	<h2 align="center">{{p.title}}</h2><hr>
+	<h3 align="center"><b>details</b></h3>
+	<h2 align="center">{{p.description}}</h2><hr>
+	<h3 align="center"><b>date of interest</b></h3>
+	<h2 align="center">{{p.date_of_interest}}</h2><hr>
+	<h3 align="center"><b>area of interest</b></h3>
+	<h2 align="center">{{p.area_of_interest}}</h2><hr>
+	<h3 align="center"><b>electrical engineering related</b></h3>
+	<h2 align="center">{{p.ee_related}}</h2><hr>
+	<h3 align="center"><b>computer science related</b></h3>
+	<h2 align="center">{{p.cs_related}}</h2><hr>
+	<h3 align="center"><b>status</b></h3>
+	<h2 align="center">{{stat}}</h2><hr>
+	<h2><b>meeting details</b></h2><hr>
+	<h3 align="center"><b>coach</b></h3>
+	<h2 align="center">{{p.coach}}</h2><hr>
+	<h3 align="center"><b>meeting date</b></h3>
+	<h2 align="center">{{p.meeting_date}}</h2><hr>
+	<h3 align="center"><b>meeting duration (in minutes)</b></h3>
+	<h2 align="center">{{p.meeting_duration}}</h2><hr>
+	<h3 align="center"><b>meeting details</b></h3>
+	<h2 align="center">{{p.meeting_details}}</h2><hr>
+	<h3 align="center"><b>video</b></h3>
+	<h2 align="center">{{p.video}}</h2><hr>
+	{% if confirm %}
+	<form action="/uap_app/tutee/ticket_{{c.id}}/confirm/">
+		{% csrf_token %}
+		<button id="submit" style="width:280px" class="submit center span-4" type="submit" value="submit">CONFIRM MEETING DETAILS</button>
+	</form>
+	{% endif %}
+</div>
+</div>
 
-<h4>Coach</h4>
-<p>{{p.coach}}</p>
-
-{% for j in details %}
-<h3>Meeting Details</h3>
-<h4>Date </h4>
-<p>{{p.meeting_date}}</p>
-<h4>Summary</h4>
-<p>{{p.meeting_details}}</p>
-<h4>Duration</h4>
-<p>{{p.meeting_duration}} minutes</p>
-<h4>Video</h4>
-<p>{{p.video}}</p>
-{% endfor %}
-
-{% for i in confirm %}
-<form action="" method="post" data-ajax="false">
-	<input id="submit" type="submit" value="Confirm Details">
-</form>
-{% endfor %}
 
 {% endblock %}

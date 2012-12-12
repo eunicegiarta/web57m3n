@@ -1,17 +1,28 @@
 {% extends "base_admin.html" %}
+{% block tutees %} class="selected" {%endblock %}
 
 {% block content %}
-
-{% for t in tutees %}
-<div style="background-color: lightgray" class="span-7">
-<h3><a href = "#">{{t.user.username}}: {{t.user.first_name}} {{t.user.last_name}}</a></h3>
-{{t.user.email}}<br>
-Research Advisor: {{t.research_advisor}}<br>
-Concentration: {{t.area_of_interest}}<br>
-CS-related: {{t.cs_request}}<br>
-EE-related: {{t.ee_request}}
-
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<h1><b>tutees</b></h1><hr>
+		{% if tutees %}
+			{% for t in tutees %}
+			<div style="background-color:#CACACA" class ="span-10 pdding example1 center last append-bottom">
+				<h3 align="center"><b>{{ t.user.first_name }} {{t.user.last_name}}</b> ({{t.user.username}})</h3>
+				<p align="center"><b>{{t.research_advisor_email}}</b> 
+					<br> {{t.phone}}</p>
+				
+				{% if t.open_project %}
+				<form action="#{{t.id}}">
+					<button id="submit" class ="submit center span-2" type="submit" value="submit">VIEW OPEN TICKET</button>
+				</form><br>
+				{% endif %}
+			</div>
+			{% endfor %}
+		{% endif %}
+		
+	</div>
 </div>
-{% endfor %}
 
 {% endblock %}

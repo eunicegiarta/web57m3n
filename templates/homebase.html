@@ -12,16 +12,13 @@
 {% endif %}
 
 <div class="container">
-	<div class="span-4"><p></p></div>
-<div class="example1 pdding prepend-top span-16 last append-bottom">
-	<h1>HOME</h1>
-
-	<p>
-	you are logged in as {{request.user}}
-	</p>
+	<div class="span-3"><p></p></div>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>welcome, {{request.user.username}}!</b></h1><hr>
 	{% if current %}
+	<h3><b>Check the status of your open ticket!</b></h3>
 	<form>
-		<button>CURRENT </button>
+		<button>View Ticket</button>
 	</form>
 	{% endif %}
 	

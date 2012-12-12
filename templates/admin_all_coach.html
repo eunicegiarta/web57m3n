@@ -1,15 +1,24 @@
-{% extends "base_admin.html" %}
-
+{% extends 'base_admin.html' %}
+{% block coaches %}class="selected"{% endblock%}
 {% block content %}
-
-{% for c in coaches %}
-<div style="background-color: lightgray" class="span-7">
-<h3><a href = "#">{{c.user.username}}: {{c.user.first_name}} {{c.user.last_name}}</a></h3>
-{{c.user.email}}<br>
-CS-support: {{c.cs_help}}<br>
-EE-support: {{c.ee_help}}
-
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<h1><b>coaches	</b></h1><hr>
+		{% if coaches %}
+			{% for c in coaches %}
+			<div style="background-color:#CACACA" class ="span-10 pdding example1 center last append-bottom">
+				<h3 align="center"><b>{{ c.user.first_name }} {{c.user.last_name}}</b> ({{c.user.username}})</h3>
+				<p align="center"><b>{{c.get_course_display}}</b> 
+					<br> {{r.phone}}</p>
+				
+				<form action="#{{c.id}}">
+					<button id="submit" class ="submit center span-2" type="submit" value="submit">VIEW ASSIGNED TICKETS</button>
+				</form><br>
+			</div>
+			{% endfor %}
+		{% endif %}
+		
+	</div>
 </div>
-{% endfor %}
-
 {% endblock %}

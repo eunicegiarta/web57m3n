@@ -3,5 +3,6 @@ from uap_app.models import *
 
 admin.site.register(TuteeUser)
 admin.site.register(CoachUser)
-admin.site.register(Project)
-admin.site.register(ReassignNote)
+admin.site.register(CoachRequest)
+admin.site.register(Ticket)
+admin.site.register(TicketNote)

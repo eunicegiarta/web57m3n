@@ -1,6 +1,52 @@
 {% extends "base_test.html" %}
 
 {% block content %}
+
+<div class="container">
+	<div class="span-3"><p></p></div>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>my tickets</b></h1> <hr>
+	<div class="append-bottom">
+	<h2 align="center"><b>open ticket</b></h2>
+	{% if curr %}
+		{% for c in curr %}
+		<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
+			<h3 align="center">{{ c.title }}</h3>
+			<p align="center">{{c.description}}</p>
+			<form action="/uap_app/tutee/ticket_{{c.id}}">
+				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+	<h4 align="center">You have no open tickets.</h4>
+	<form action="/uap_app/tutee/new_ticket/">
+	<button id="submit" class="submit center span-4" type="submit" value="submit">CREATE NEW TICKET</button>
+	</form>
+	{% endif %}
+	</div>
+	<hr>
+	
+	<h2 align="center"><b>previous tickets</b></h2>
+	{% if projects %}
+	   {% for p in projects %}
+	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
+			<h3 align="center">{{ p.title }}</h3>
+			<form action="/uap_app/tutee/ticket_{{p.id}}">
+				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+	<h4 align="center">You have no previous tickets</h4>
+	{% endif %}
+</div>
+<div class="span-4"><p></p></div>
+</div>
+
+
+
+
 <h1>All Requests</h1>
 
 {% for i in create %}

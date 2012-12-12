@@ -1,0 +1,33 @@
+{% extends 'basecase.html' %}
+
+{% block signup %}class="selected"{%endblock%}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if form.subject.errors %}
+    <ol>
+    {% for error in form.subject.errors %}
+        <li><strong>{{ error|escape }}</strong></li>
+    {% endfor %}
+    </ol>
+{% endif %}
+<div class="container">
+		<div class="span-3"><p></p></div>
+	<div class="login example1 pdding prepend-4 append-1 span-17 last">
+		<h1><b>coach application</b></h1><hr>
+		<form class="login center" action="/uap_app/coach/request/" method="post">
+			{% csrf_token %}
+			{{form.as_p}}
+			<button style="width: 300px;" id="submit" class="submit center span-4" type="submit" value="submit">SUBMIT COACH APPLICATION </button>
+		</form>
+	</div>
+	<div class="span-3"><p></p></div>
+</div>
+	
+{% endblock %}

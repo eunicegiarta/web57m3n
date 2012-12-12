@@ -1,6 +1,64 @@
 {% extends "base_coach.html" %}
 
 {% block content %}
+
+<div class="container">
+	<div class="span-3"><p></p></div>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>my tickets</b></h1> <hr>
+	<div class="append-bottom">
+	<h2 align="center"><b>open tickets</b></h2>
+	{% if open %}
+		{% for t in open %}
+		<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
+			<h3 align="center">{{ t.title }}</h3>
+			<p align="center"><b>{{t.date_of_interest}}</b><br>{{t.description}}</p>
+			<form action="/uap_app/coach/ticket_{{t.id}}">
+				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+		<h3 align="center"> You currently have no open tickets </h3>
+	{% endif %}
+	</div>
+	<hr>
+	
+	<h2 align="center"><b>submitted tickets</b></h2>
+	{% if pending  %}
+	   {% for p in pending %}
+	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
+			<h3 align="center">{{ p.title }}</h3>
+			<p align="center">{{p.description}}</p>
+			<form action="/uap_app/coach/ticket_{{p.id}}">
+				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+	<h4 align="center">You have no submitted/pending tickets</h4>
+	{% endif %}
+	<hr>
+	<h2 align="center"><b>past tickets</b></h2>
+	{% if prev_tix  %}
+	   {% for p in prev_tix %}
+	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
+			<h3 align="center">{{ p.title }}</h3>
+			<p align="center">{{p.description}}</p>
+			<form action="/uap_app/coach/ticket_{{p.id}}">
+				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		{% endfor %}
+	{% else %}
+	<h4 align="center">You have previous tickets</h4>
+	{% endif %}
+	
+</div>
+</div>
+
+
+
 <h1>All Requests</h1>
 
 

@@ -78,6 +78,13 @@ button.submit:active {
 {% block home %} class="selected"{% endblock %}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <div class="container">
 	<div class="span-2"><p></p></div>
 <div class="span-7">
@@ -99,7 +106,8 @@ button.submit:active {
 <div class="pdding example1 prepend-1 span-6 append-1 prepend-top append-bottom">
 	<h3><b>Undergraduate?</b></h3>
 	<p>Make your contribution to the Course Six Communication Center online community as a Coach!</p>
-	<form class="login" action="/coach/request/" method="post">
+	<form class="login" action="/uap_app/coach/request/">
+		{% csrf_token %}
 		<button id="submit" class="submit span-4" type="submit" value="submit">APPLY TO COACH</button>
 	</form>
 </div>

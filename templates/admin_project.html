@@ -1,15 +1,42 @@
 {% extends "base_admin.html" %}
+{%block scripts%}
+h3{
+	color: grey;
+}
+{%endblock%}
 
-
+{% block tickets %}class ="selected"{%endblock%}
 
 {% block content %}
-{% if messages%}
-{%for message in messages%}
-{% endfor %}
-{% endif %}
-<form action="" method="post" data-ajax="false">
-	{% csrf_token %}
-{{form.as_p}}
-	<input id="submit" type="submit" value="Update Request">
-</form>
+<div class="container">
+	<div class="span-3"><p></p></div>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>ticket details </b> {% if assign %}<button class="submit">ASSIGN COACH </button>{% endif %}</h1> <hr>
+	<h3 align="center"><b>title</b></h3>
+	<h2 align="center">{{p.title}}</h2><hr>
+	<h3 align="center"><b>details</b></h3>
+	<h2 align="center">{{p.description}}</h2><hr>
+	<h3 align="center"><b>date of interest</b></h3>
+	<h2 align="center">{{p.date_of_interest}}</h2><hr>
+	<h3 align="center"><b>area of interest</b></h3>
+	<h2 align="center">{{p.area_of_interest}}</h2><hr>
+	<h3 align="center"><b>electrical engineering related</b></h3>
+	<h2 align="center">{{p.ee_related}}</h2><hr>
+	<h3 align="center"><b>computer science related</b></h3>
+	<h2 align="center">{{p.cs_related}}</h2><hr>
+	<h3 align="center"><b>status</b></h3>
+	<h2 align="center">{{stat}}</h2><hr>
+	<h2><b>meeting details</b></h2><hr>
+	<h3 align="center"><b>coach</b></h3>
+	<h2 align="center">{{p.coach}} {% if assign %}<button class="submit center">ASSIGN COACH </button>{% endif %}</h2><hr>
+	<h3 align="center"><b>meeting date</b></h3>
+	<h2 align="center">{{p.meeting_date}}</h2><hr>
+	<h3 align="center"><b>meeting duration (in minutes)</b></h3>
+	<h2 align="center">{{p.meeting_duration}}</h2><hr>
+	<h3 align="center"><b>meeting details</b></h3>
+	<h2 align="center">{{p.meeting_details}}</h2><hr>
+	<h3 align="center"><b>video</b></h3>
+	<h2 align="center">{{p.video}}</h2><hr>
+</div>
+</div>
 {% endblock %}
