@@ -6,15 +6,18 @@
 <div class="example1 pdding prepend-top span-17 last append-bottom">
 	<h1><b>tickets</b></h1> <hr>
 	<div class="append-bottom">
-	<h2 align="center"><b>new tickets--</b>need coach assignment</h2>
+	<h2 style="text-indent: 20px" align=""><b>new tickets--</b>need coach assignment</h2>
 	{% if to_assign %}
 		{% for t in to_assign %}
-		<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ t.title }}</h3>
-			<p align="center">{{t.area_of_interest}}<br> {{t.date_of_interest}}</p>
+		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
+			<div class="span-9 ">
+			<h4><b>{{ t.title }}</b>--({{t.date_of_interest}})<br>{{t.area_of_interest}}</h4>
+		</div>
+		<div class="prepend-1 span-5 last">
 			<form action="/uap_app/admin/ticket_{{t.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">ASSIGN COACH</button>
+				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">DETAILS</button>
 			</form>
+		</div>
 		</div>
 		{% endfor %}
 	{% else %}
@@ -24,15 +27,18 @@
 	<hr>
 	
 	<div class="append-bottom">
-	<h2 align="center"><b>assigned tickets</b></h2>
+	<h2 style="text-indent: 20px" align=""><b>assigned tickets</b></h2>
 	{% if assigned  %}
 	   {% for p in assigned %}
-	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ p.title }}</h3>
-			<p align="center"><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></p>
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
-			</form>
+	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
+			<div class="span-9 ">
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+			</div>
+			<div class="prepend-1 span-5 last">
+				<form action="/uap_app/admin/ticket_{{p.id}}">
+					<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">DETAILS</button>
+				</form>
+			</div>
 		</div>
 		{% endfor %}
 	{% else %}
@@ -41,15 +47,18 @@
 	</div> <hr>
 	
 	<div class="append-bottom">
-	<h2 align="center"><b>submitted tickets--</b> coach has submitted meeting details</h2>
+	<h2 style="text-indent: 20px" align=""><b>submitted tickets--</b> coach has submitted meeting details</h2>
 	{% if submitted  %}
 	   {% for p in submitted %}
-	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ p.title }}</h3>
-			<p align="center"><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b><br> Meeting Date: {{p.meeting_date}}</p>
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
-			</form>
+	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
+			<div class="span-9 ">
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+			</div>
+			<div class="prepend-1 span-5 last">
+				<form action="/uap_app/admin/ticket_{{p.id}}">
+					<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">DETAILS</button>
+				</form>
+			</div>
 		</div>
 		{% endfor %}
 	{% else %}
@@ -58,15 +67,18 @@
 	</div> <hr>
 	
 	<div class="append-bottom">
-	<h2 align="center"><b>completed tickets--</b> needs approval</h2>
+	<h2 style="text-indent: 20px" align=""><b>completed tickets--</b> needs approval</h2>
 	{% if approval  %}
 	   {% for p in approval %}
-	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ p.title }}</h3>
-			<p align="center"><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></p>
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
-			</form>
+	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
+			<div class="span-9 ">
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+			</div>
+			<div class="prepend-1 span-5 last">
+				<form action="/uap_app/admin/ticket_{{p.id}}">
+					<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">DETAILS</button>
+				</form>
+			</div>
 		</div>
 		{% endfor %}
 	{% else %}

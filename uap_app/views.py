@@ -140,7 +140,7 @@ def logging_in(request):
             if user.is_active:
                 login(request, user)
                 if user.is_staff:
-                    return HttpResponseRedirect('/admin/')
+                    return HttpResponseRedirect('/uap_app/admin/home')
                 try: 
                     CoachUser.objects.get(user__id=request.user.id)
                     print 'logged in COACH'
@@ -577,33 +577,6 @@ def admin_view_request(request, pid="nope"):
     if pid.isdigit()==False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
     p = Ticket.objects.get(id=int(pid))
-    """
-    if request.method == 'POST':
-        form = ReqForm(request.POST)
-        if form.is_valid():
-            p.title = request.POST['title']
-            p.description = request.POST['description']
-            p.date_of_interest = request.POST['date_of_interest']
-            p.status = request.POST['status']
-            p.meeting_details = request.POST['meeting_details']
-            p.meeting_duration = request.POST['meeting_duration']
-            p.save()
-            ## consider meeting_date
-            if User.objects.get(username=request.POST['tutee']):
-                p.tutee = User.objects.get(username=request.POST['tutee']).tuteeuser
-                p.save()
-            if  User.objects.get(username=request.POST['coach']):
-                p.coach = User.objects.get(username=request.POST['coach']).coachuser
-                p.save()
-            messages.success(request, 'Request has been successfully updated')
-            return render_to_response('home_admin.html', {'request':request}, context_instance=RequestContext(request))
-    else:
-        if p.coach == None:
-            initial = dict(title = p.title, description = p.description, date_of_interest = p.date_of_interest, status = p.status, tutee = str(p.tutee.user.username), coach = "", video = p.video, meeting_details = p.meeting_details, meeting_date = p.meeting_date, meeting_duration = p.meeting_duration)
-        else: 
-            initial = dict(title = p.title, description = p.description, date_of_interest = p.date_of_interest, status = p.status, tutee = str(p.tutee.user.username), coach = str(p.coach.user.username), video = p.video, meeting_details = p.meeting_details, meeting_date = p.meeting_date, meeting_duration = p.meeting_duration)
-        form = ReqForm(initial)
-        """
     assign = False
     if p.status == 'NAS':
         assign=True
@@ -644,11 +617,21 @@ def add_coach(request, pid):
     r.status = 'AC'
     r.save()
     ## generate email
-    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "To login, your username is your athena.  Your password is '"+password+"'.", to=[str(new.email), 'eunicegiarta@gmail.com'])
+    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "To login, your username is your athena: "+new.username+".  Your password is '"+password+"'.", to=[str(new.email), 'eunicegiarta@gmail.com'])
     email_coach.send()
     return HttpResponseRedirect('/uap_app/admin/coach_requests/')
     
-    
+def reject_coach_req(request, pid="none"):
+    if request.user.is_superuser != True:
+        return HttpResponseRedirect('/uap_app/logout/')
+    if pid.isdigit() ==False:
+        message.error(request, "ERROR: Incorrect UID for CoachRequest instance")
+        return HttpResponseRedirect('/uap_app/admin/home/')
+    r = CoachRequest.objects.get(id=int(pid))
+    r.status = 'RJ'
+    r.save()
+    return HttpResponseRedirect('/uap_app/admin/coach_requests/')
+
 @login_required
 def admin_profile(request):
     u = request.user

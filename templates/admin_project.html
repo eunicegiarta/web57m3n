@@ -12,31 +12,40 @@ h3{
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
 	<h1><b>ticket details </b> {% if assign %}<button class="submit">ASSIGN COACH </button>{% endif %}</h1> <hr>
-	<h3 align="center"><b>title</b></h3>
-	<h2 align="center">{{p.title}}</h2><hr>
-	<h3 align="center"><b>details</b></h3>
-	<h2 align="center">{{p.description}}</h2><hr>
-	<h3 align="center"><b>date of interest</b></h3>
-	<h2 align="center">{{p.date_of_interest}}</h2><hr>
-	<h3 align="center"><b>area of interest</b></h3>
-	<h2 align="center">{{p.area_of_interest}}</h2><hr>
-	<h3 align="center"><b>electrical engineering related</b></h3>
-	<h2 align="center">{{p.ee_related}}</h2><hr>
-	<h3 align="center"><b>computer science related</b></h3>
-	<h2 align="center">{{p.cs_related}}</h2><hr>
-	<h3 align="center"><b>status</b></h3>
-	<h2 align="center">{{stat}}</h2><hr>
+	<div class="span-14 prepend-3 last">
+	<h3 align=""><b>title</b></h3>
+	<h2 align="">{{p.title}}</h2><hr>
+	<h3 align=""><b>details</b></h3>
+	<h2 align="">{{p.description}}</h2><hr>
+	<h3 align=""><b>date of interest</b></h3>
+	<h2 align="">{{p.date_of_interest}}</h2><hr>
+	<h3 align=""><b>area of interest</b></h3>
+	<h2 align="">{{p.area_of_interest}}</h2><hr>
+	<h3 align=""><b>electrical engineering related</b></h3>
+	<h2 align="">{{p.ee_related}}</h2><hr>
+	<h3 align=""><b>computer science related</b></h3>
+	<h2 align="">{{p.cs_related}}</h2><hr>
+	<h3 align=""><b>status</b></h3>
+	<h2 align="">{{p.get_status_display}}</h2><hr>
+	</div>
 	<h2><b>meeting details</b></h2><hr>
-	<h3 align="center"><b>coach</b></h3>
-	<h2 align="center">{{p.coach}} {% if assign %}<button class="submit center">ASSIGN COACH </button>{% endif %}</h2><hr>
-	<h3 align="center"><b>meeting date</b></h3>
-	<h2 align="center">{{p.meeting_date}}</h2><hr>
-	<h3 align="center"><b>meeting duration (in minutes)</b></h3>
-	<h2 align="center">{{p.meeting_duration}}</h2><hr>
-	<h3 align="center"><b>meeting details</b></h3>
-	<h2 align="center">{{p.meeting_details}}</h2><hr>
-	<h3 align="center"><b>video</b></h3>
-	<h2 align="center">{{p.video}}</h2><hr>
+	<div class="span-14 prepend-3 last">
+		<div class "span-2 append-1">
+			<h3 align=""><b>coach</b></h3>
+			<h2 align="">{{p.coach}}</h2>
+		</div>
+		<div class="span-2 last"> 
+			{% if assign %}<button class="submit ">ASSIGN COACH </button>{% endif %}
+		</div><hr>
+	<h3 align=""><b>meeting date</b></h3>
+	<h2 align="">{{p.meeting_date}}</h2><hr>
+	<h3 align=""><b>meeting duration (in minutes)</b></h3>
+	<h2 align="">{{p.meeting_duration}}</h2><hr>
+	<h3 align=""><b>meeting details</b></h3>
+	<h2 align="">{{p.meeting_details}}</h2><hr>
+	<h3 align=""><b>video</b></h3>
+	<h2 align="">{{p.video}}</h2><hr>
+	</div>
 </div>
 </div>
 {% endblock %}
