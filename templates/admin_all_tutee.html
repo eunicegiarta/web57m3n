@@ -8,16 +8,18 @@
 		<h1><b>tutees</b></h1><hr>
 		{% if tutees %}
 			{% for t in tutees %}
-			<div style="background-color:#CACACA" class ="span-10 pdding example1 center last append-bottom">
-				<h3 align="center"><b>{{ t.user.first_name }} {{t.user.last_name}}</b> ({{t.user.username}})</h3>
-				<p align="center"><b>{{t.research_advisor_email}}</b> 
-					<br> {{t.phone}}</p>
-				
+			<div style="height:50px; background-color:#CACACA" class ="span-14 pdding example1 center last append-bottom">
+				<div class="span-8">
+				<h3 align=""><b>{{ t.user.first_name }} {{t.user.last_name}}</b> ({{t.user.username}})<br> 
+					phone: {{t.phone}} <br> advisor: {{t.research_advisor_email}} </h3>
+				</div>
+				<div class="span-1 pdding">
 				{% if t.open_project %}
 				<form action="#{{t.id}}">
 					<button id="submit" class ="submit center span-2" type="submit" value="submit">VIEW OPEN TICKET</button>
 				</form><br>
 				{% endif %}
+				</div>
 			</div>
 			{% endfor %}
 		{% endif %}

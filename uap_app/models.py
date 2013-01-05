@@ -176,12 +176,14 @@ class AdminUserProfileForm(forms.Form):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField()
-    
+
+### CURRENTLY UNUSED    
 class TuteeUserProfileForm(forms.Form):
     email = forms.EmailField()
     phone = forms.CharField(max_length=11)
     research_advisor_email = forms.EmailField()
 
+### CURRENTLY UNUSED
 class CoachUserProfileForm(forms.Form):
     email = forms.EmailField()
     phone = forms.CharField(max_length=11)
@@ -191,6 +193,12 @@ class CoachUserProfileForm(forms.Form):
 class EmailAdminForm(forms.Form):
     subject = forms.CharField(label="Subject")
     message = forms.CharField(widget = forms.Textarea, label="Problem Description")
+    
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    email = forms.CharField()
+    subject = forms.CharField(label="Subject")
+    message = forms.CharField(widget = forms.Textarea, label="Message")
 
 class CoachReqForm(forms.Form):
     athena_username = forms.CharField(widget=forms.TextInput({ "placeholder": "jsmith2013" })) 
@@ -201,6 +209,11 @@ class CoachReqForm(forms.Form):
     course = forms.ChoiceField(choices = COURSE_CHOICES)
     uat_semester = forms.ChoiceField(widget=forms.Select, choices = SEMESTER_CHOICES, label="Semester enrolled in 6.8UAT")
     uat_year = forms.IntegerField(label="Year enrolled in 6.UAT", widget=forms.TextInput({ "placeholder": "2012" }))
+
+class ChangePasswordForm(forms.Form):
+    current = forms.CharField(label="Current Password") 
+    new1 = forms.CharField(widget=forms.PasswordInput(render_value=False), label="New Password")
+    new2 = forms.CharField(widget=forms.PasswordInput(render_value=False), label="Confirm New Password")
 
 class ValidateAgreementForm(forms.Form):
     agree = forms.BooleanField(required=True, label="I have read and agree with the terms and conditions outlined above")

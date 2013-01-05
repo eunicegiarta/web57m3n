@@ -1,12 +1,12 @@
 {% extends "base_admin.html" %}
-{%block tickets%}class="selected"{% endblock %}
+{%block tickets %}class="selected"{% endblock %}
 {% block content %}
 <div class="container">
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
 	<h1><b>tickets</b></h1> <hr>
 	<div class="append-bottom">
-	<h2 style="text-indent: 20px" align=""><b>new tickets--</b>need coach assignment</h2>
+	<h2 style="text-indent: 20px" align=""><b>new tickets</b> (need coach assignment)</h2>
 	{% if to_assign %}
 		{% for t in to_assign %}
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
@@ -32,14 +32,14 @@
 	   {% for p in assigned %}
 	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
 			<div class="span-9 ">
-				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b> matched with <b>{{p.coach.user.first_name}} 	{{p.coach.user.last_name}}</b></h4>
 			</div>
 			<div class="prepend-1 span-5 last">
 				<form action="/uap_app/admin/ticket_{{p.id}}">
 					<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">DETAILS</button>
 				</form>
 			</div>
-		</div>
+		</div><br>
 		{% endfor %}
 	{% else %}
 	<h4 align="center">There are currently no assigned tickets</h4>
@@ -47,12 +47,12 @@
 	</div> <hr>
 	
 	<div class="append-bottom">
-	<h2 style="text-indent: 20px" align=""><b>submitted tickets--</b> coach has submitted meeting details</h2>
+	<h2 style="text-indent: 20px" align=""><b>submitted tickets</b> (coach has submitted meeting details)</h2>
 	{% if submitted  %}
 	   {% for p in submitted %}
 	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
 			<div class="span-9 ">
-				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b> matched with <b>{{p.coach.user.first_name}} {{p.coach.user.last_name}}</b></h4>
 			</div>
 			<div class="prepend-1 span-5 last">
 				<form action="/uap_app/admin/ticket_{{p.id}}">
@@ -67,12 +67,12 @@
 	</div> <hr>
 	
 	<div class="append-bottom">
-	<h2 style="text-indent: 20px" align=""><b>completed tickets--</b> needs approval</h2>
+	<h2 style="text-indent: 20px" align=""><b>completed tickets</b> (needs admin approval)</h2>
 	{% if approval  %}
 	   {% for p in approval %}
 	   	<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 center last">
 			<div class="span-9 ">
-				<h4><b>{{ p.title }}</b><br><b>{{p.tutee}}</b> matched with <b>{{p.coach}}</b></h4>
+				<h4><b>{{ p.title }}</b><br><b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b> matched with <b>{{p.coach.user.first_name}} {{p.coach.user.last_name}}</b></h4>
 			</div>
 			<div class="prepend-1 span-5 last">
 				<form action="/uap_app/admin/ticket_{{p.id}}">

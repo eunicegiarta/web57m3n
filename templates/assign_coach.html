@@ -1,31 +1,33 @@
 {% extends "base_admin.html" %}
 
+{% block tickets %}class="selected"{% endblock %}
+
 {% block content %}
-<h2>Assign Coach to Request #{{p.id}}</h2>
-<div class="span-7">
-	<h4 style="color: #990000">Title</h4>
-	<p>{{p.title}}</p>
-	<h4 style="color: #990000">Description</h4>
-	<p>{{p.description}}</p>
-	<h4 style="color: #990000">Date of Interest</h4>
-	<p>{{p.date_of_interest}}</p>
-	<h4 style="color: #990000">Tutee</h4>
-	<p>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</p>
-	<h4 style="color: #990000">Research Advisor</h4>
-	<p>{{p.tutee.research_advisor}}</p>
+<div class="container">
+	<div class="span-2"><p></p></div>
+<div class="example1 pdding prepend-top span-20 append-bottom">
+<h1><b>ticket #{{p.id}}: assign coach</b></h1><hr>
+<div class="span-12">
+	<h3 style="color: gray"align=""><b>conference talk title</b></h3>
+	<h3 align="">{{p.title}}</h2><hr>
+	<h3 style="color: gray" align=""><b>paper abstract</b></h3>
+	<h3 style="color:black" align="">{{p.description}}</h3><hr>
+	<h3 style="color: gray" align=""><b>approximate conference presentation date</b></h3>
+	<h3 align="">{{p.date_of_interest}}</h2><hr>
+	<h3 style="color: gray" align=""><b>area of interest</b></h3>
+	<h3 align="">{{p.area_of_interest}}</h2><hr>
+	<h3 style="color: gray" align=""><b>research advisor</b></h3>
+	<h3 align="">{{p.tutee.research_advisor_email}}</h2><hr>
 </div>
 
-<div class="span-17 last">
-	<h3> Choose from the following Coaches </h3>
+<div style="background-color: Gainsboro" class="span-7 pdding last">
+	<h2><b> Available Coaches </b></h2>
 	<form action="" method="POST">
 		{% csrf_token %}
 	{% for c in coaches %}
-	<input type="radio" name="coach" value='{{c.user.id}}' >{{c.user.first_name}} {{c.user.last_name}}<br>
-	EE-support: {{c.ee_help}} <br>
-	CS-support: {{c.cs_help}}<br><br>
+	<input type="radio" name="coach" value='{{c.id}}'><b>{{c.course}} {{c.user.first_name}} {{c.user.last_name}} ({{c.projects_assigned}})</b><hr>
 	{% endfor %}
-	
-	<input type="submit" value="Assign" />
+	<button class="submit">ASSIGN</button>
 	</form>
 </div>
 

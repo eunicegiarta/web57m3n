@@ -1,34 +1,33 @@
-{% extends "base_coach.html" %}
+{% extends 'base_admin.html' %}
 
-{% block tickets %} class="selected"{% endblock %}
+{%block coaches%}class="selected"{%endblock%}
 
 {% block content %}
-
 <div class="container">
 	<div class="span-3"><p></p></div>
-<div class="example1 pdding prepend-top span-17 last append-bottom">
-	<h1><b>my tickets</b></h1> <hr>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<h1><b>coach:</b> {{c.user.first_name}} {{c.user.last_name}}</h1><hr>
 	<div class="append-bottom">
-	<h2 align="center"><b>open tickets</b></h2>
-	{% if open %}
+		<h2 align="center"><b>open tickets</b></h2>
+		{% if open %}
 		{% for t in open %}
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
 			<div class="span-9 ">
 			<h4><b>{{ t.title }}</b>--({{t.date_of_interest}})<br>tutee: <b>{{t.tutee.user.first_name}} {{t.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/coach/ticket_{{t.id}}">
+			<form action="/uap_app/admin/ticket_{{t.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
 		</div>
 		{% endfor %}
 	{% else %}
-		<h3 align="center"> You currently have no open tickets </h3>
+		<h3 align="center"> {{c.user.first_name}} has no open tickets </h3>
 	{% endif %}
 	</div>
 	<hr>
-	
+
 	<h2 align="center"><b>submitted tickets</b></h2>
 	{% if pending  %}
 	   {% for p in pending %}
@@ -37,20 +36,19 @@
 			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/coach/ticket_{{p.id}}">
+			<form action="/uap_app/admin/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
 		</div>
 		{% endfor %}
 	{% else %}
-	<h4 align="center">You have no submitted/pending tickets</h4>
+	<h4 align="center">{{c.user.first_name}} has no submitted/pending tickets</h4>
 	{% endif %}
 	<hr>
 	<h2 align="center"><b>past tickets</b></h2>
 	{% if prev_tix  %}
 	   {% for p in prev_tix %}
-	
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
 			<div class="span-9 ">
 			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
@@ -63,10 +61,9 @@
 		</div>
 		{% endfor %}
 	{% else %}
-	<h4 align="center">You have previous tickets</h4>
+	<h4 align="center">{{c.user.first_name}} has no previous tickets</h4>
 	{% endif %}
-	
-</div>
+	</div>
 </div>
 
 {% endblock %}

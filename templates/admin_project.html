@@ -11,20 +11,17 @@ h3{
 <div class="container">
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
-	<h1><b>ticket details </b> {% if assign %}<button class="submit">ASSIGN COACH </button>{% endif %}</h1> <hr>
+	<h1><b>ticket details </b> {% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit">ASSIGN COACH </button></form>{% endif %}</h1> <hr>
 	<div class="span-14 prepend-3 last">
-	<h3 align=""><b>title</b></h3>
+	<h3 align=""><b>conference talk title</b></h3>
 	<h2 align="">{{p.title}}</h2><hr>
-	<h3 align=""><b>details</b></h3>
-	<h2 align="">{{p.description}}</h2><hr>
-	<h3 align=""><b>date of interest</b></h3>
+	<h3 align=""><b>paper abstract</b></h3>
+	<h3 style="color:black" align="">{{p.description}}</h3><hr>
+	<h3 align=""><b>approximate conference presentation date</b></h3>
 	<h2 align="">{{p.date_of_interest}}</h2><hr>
 	<h3 align=""><b>area of interest</b></h3>
 	<h2 align="">{{p.area_of_interest}}</h2><hr>
-	<h3 align=""><b>electrical engineering related</b></h3>
-	<h2 align="">{{p.ee_related}}</h2><hr>
-	<h3 align=""><b>computer science related</b></h3>
-	<h2 align="">{{p.cs_related}}</h2><hr>
+
 	<h3 align=""><b>status</b></h3>
 	<h2 align="">{{p.get_status_display}}</h2><hr>
 	</div>
@@ -32,10 +29,10 @@ h3{
 	<div class="span-14 prepend-3 last">
 		<div class "span-2 append-1">
 			<h3 align=""><b>coach</b></h3>
-			<h2 align="">{{p.coach}}</h2>
+			<h2 align="">{{p.coach.user.first_name}} {{p.coach.user.last_name}}</h2>
 		</div>
 		<div class="span-2 last"> 
-			{% if assign %}<button class="submit ">ASSIGN COACH </button>{% endif %}
+			{% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit ">ASSIGN COACH </button>{% endif %}
 		</div><hr>
 	<h3 align=""><b>meeting date</b></h3>
 	<h2 align="">{{p.meeting_date}}</h2><hr>

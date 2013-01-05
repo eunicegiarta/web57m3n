@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
      url(r'^admin/', include(admin.site.urls)),
     
+    #REDIRECTS
+    url(r'^no_access/$', 'uap_app.views.no_access' ),
     
     #TUTEE and BASIC
     url(r'^uap_app/$', 'uap_app.views.basecase_home' ),
@@ -23,9 +25,11 @@ urlpatterns = patterns('',
     url(r'^uap_app/coach/request/$', 'uap_app.views.basecase_coach_application' ),
    # url(r'^uap_app/signup/coach/$', 'uap_app.views.basecase_signup_coach' ),
     url(r'^uap_app/tutee/agreement/$', 'uap_app.views.tutee_agreement' ),
+    url(r'^uap_app/tutee_agreement/$', 'uap_app.views.view_tutee_agreement' ),
     url(r'^uap_app/tutee/signup/validate$', 'uap_app.views.tutee_signup' ),
     url(r'^uap_app/tutee/ticket_(?P<pid>\d+)/cancel/$', 'uap_app.views.cancel_ticket' ),
     url(r'^uap_app/tutee/ticket_(?P<pid>\d+)/confirm/$', 'uap_app.views.confirm_ticket' ),
+    url(r'^uap_app/contact/', 'uap_app.views.basecase_contact'),
     
     
     url(r'^uap_app/tutee/new_ticket/$', 'uap_app.views.new_project' ),
@@ -35,9 +39,8 @@ urlpatterns = patterns('',
     url(r'^accounts/login/home/success$', 'uap_app.views.home_success' ),
     url(r'^uap_app/home/failure$', 'uap_app.views.home_failure' ),
     url(r'^accounts/login/$', 'uap_app.views.logging_in' ),
-    url(r'^uap_app/admin/project/details$', 'uap_app.views.project_details_admin' ),
     url(r'^uap_app/logout$', 'uap_app.views.logging_out' ),
-    url(r'^uap_app/tutee/requests/$', 'uap_app.views.all_requests_tutee' ),
+    url(r'^uap_app/tutee/tickets/$', 'uap_app.views.all_requests_tutee' ),
     url(r'^uap_app/tutee/ticket_(?P<pid>\d+)$', 'uap_app.views.project_tutee' ),
     url(r'^uap_app/tutee/report/$', 'uap_app.views.report_tutee'),
     
@@ -45,7 +48,7 @@ urlpatterns = patterns('',
     url(r'^uap_app/coach/profile/$', 'uap_app.views.coach_profile' ),
     url(r'^uap_app/coach/tickets/$', 'uap_app.views.all_requests_coach' ),
     url(r'^uap_app/coach/home/$', 'uap_app.views.home_coach'),
-    url(r'^uap_app/coach/request_(?P<pid>\d+)$', 'uap_app.views.project_coach' ),
+    url(r'^uap_app/coach/ticket_(?P<pid>\d+)$', 'uap_app.views.project_coach' ),
     url(r'^uap_app/coach/submit_meeting_details/request_(?P<pid>\d+)$', 'uap_app.views.submit_mtg_details'),
     url(r'^uap_app/coach/report/$', 'uap_app.views.report_coach'),
     
@@ -54,11 +57,14 @@ urlpatterns = patterns('',
     url(r'^uap_app/admin/coach_requests/$', 'uap_app.views.admin_coach_requests'),
     url(r'^uap_app/admin/coach_request_(?P<pid>\d+)/accept/$', 'uap_app.views.add_coach'),
     url(r'^uap_app/admin/coach_request_(?P<pid>\d+)/reject/$', 'uap_app.views.reject_coach_req'),
+    url(r'^uap_app/admin/project/details$', 'uap_app.views.project_details_admin' ),
     url(r'^uap_app/admin/view_tickets/$', 'uap_app.views.admin_view_requests'),
     url(r'^uap_app/admin/view_tutees/$', 'uap_app.views.admin_all_tutee'),
     url(r'^uap_app/admin/view_coaches/$', 'uap_app.views.admin_all_coach'),
+    url(r'^uap_app/admin/view_coach(?P<pid>\d+)/$', 'uap_app.views.admin_view_coach'),
     url(r'^uap_app/admin/assign_request_(?P<pid>\d+)$', 'uap_app.views.assign_coach'),
     url(r'^uap_app/admin/ticket_(?P<pid>\d+)$', 'uap_app.views.admin_view_request' ),
+    url(r'^uap_app/admin/ticket_(?P<pid>\d+)/assign/$', 'uap_app.views.assign_ticket' ),
     url(r'^uap_app/admin/profile/$', 'uap_app.views.admin_profile' ),
     
     

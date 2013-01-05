@@ -1,4 +1,5 @@
 {% extends "base_test.html" %}
+{%block tickets%} class="selected"{%endblock%}
 
 {% block content %}
 
@@ -7,15 +8,18 @@
 <div class="example1 pdding prepend-top span-17 last append-bottom">
 	<h1><b>my tickets</b></h1> <hr>
 	<div class="append-bottom">
-	<h2 align="center"><b>open ticket</b></h2>
+	<h2 align=""><b>open ticket</b></h2>
 	{% if curr %}
 		{% for c in curr %}
-		<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ c.title }}</h3>
-			<p align="center">{{c.description}}</p>
+		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
+			<div class="span-9 ">
+			<h4><b>{{ c.title }}</b>--({{c.date_of_interest}})<br>{{c.area_of_interest}}</h4>
+		</div>
+		<div class="prepend-1 span-5 last">
 			<form action="/uap_app/tutee/ticket_{{c.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
+		</div>
 		</div>
 		{% endfor %}
 	{% else %}
@@ -27,45 +31,54 @@
 	</div>
 	<hr>
 	
-	<h2 align="center"><b>previous tickets</b></h2>
+	<h2 align=""><b>previous tickets</b></h2>
 	{% if projects %}
 	   {% for p in projects %}
-	   	<div style="background-color:#CACACA" class ="span-10 pdding example1 center last">
-			<h3 align="center">{{ p.title }}</h3>
+		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
+			<div class="span-9 ">
+			<h4><b>{{ p.title }}</b>--{{p.meeting_date}}<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
+		</div>
+		<div class="prepend-1 span-5 last">
 			<form action="/uap_app/tutee/ticket_{{p.id}}">
-				<button id="submit" class="submit center span-4" type="submit" value="submit">VIEW DETAILS</button>
+				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
+		</div>
 		{% endfor %}
+		
+		{% for p in cancelled %}
+		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
+			<div class="span-9 ">
+			<h4><b>{{ p.title }}</b> [CANCELLED]<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
+		</div>
+		<div class="prepend-1 span-5 last">
+			<form action="/uap_app/tutee/ticket_{{p.id}}">
+				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		</div>
+		{% endfor %}
+	
 	{% else %}
-	<h4 align="center">You have no previous tickets</h4>
+		{% if cancelled %}
+		{% for p in cancelled %}
+		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
+			<div class="span-9 ">
+			<h4><b>{{ p.title }}</b> [CANCELLED]<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
+		</div>
+		<div class="prepend-1 span-5 last">
+			<form action="/uap_app/tutee/ticket_{{p.id}}">
+				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
+			</form>
+		</div>
+		</div>
+		{% endfor %}
+		{%else%}
+			<h4 align="center">You have no previous tickets</h4>
+		{%endif%}
 	{% endif %}
 </div>
 <div class="span-4"><p></p></div>
 </div>
-
-
-
-
-<h1>All Requests</h1>
-
-{% for i in create %}
-<h2> Create New Request</h2>
-<p>You have no open requests.</p>
-<a href="/uap_app/tutee/new_request/"> CREATE NEW REQUEST </a>
-{% endfor %}
-
-{% for proj in p %}
-<h2>Current</h2>
-<h3><a href = "/uap_app/tutee/request_{{proj.id}}">{{ proj.title }}</a></h3>
-<p>{{proj.description}}</p>
-{% endfor %}
-
-
-<h2>Previous </h2>
-{% for project in projects %}
-<h3><a href = "/uap_app/tutee/request_{{project.id}}">{{ project.title }}</a></h3>
-<p>{{project.description}}</p>
-{% endfor %}
 
 {% endblock %}

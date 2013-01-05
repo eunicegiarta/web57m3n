@@ -1,5 +1,7 @@
 {% extends 'base_admin.html' %}
 
+{% block requests%}class="selected"{% endblock %}
+
 {% block content %}
 <div class="container">
 	<div class="span-3"><p></p></div>
@@ -23,6 +25,8 @@
 			</div>
 	
 			{% endfor %}
+		{% else %}
+		<p align="center">There are no new coach requests.</p>
 		{% endif %}
 		
 	</div>

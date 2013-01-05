@@ -1,0 +1,38 @@
+TODO ITEMS
+- basecase CONTACT page
+	- fix to the size of text inputs
+- autoupdate of cscc-admin?? or let superadmin know when admin has been created. REMIND
+
+- fix layout of tutee/coach TICKET views (the boxes) also to match admin look
+  - COACH**DOES NOT CURRENTLY WORK
+
+- TUTEE view open ticket **
+  - make consistent with VIEW DETAILS from ticket view
+- implement functionality for UPDATE PASSWORD
+- fix home/failure AND home/success redirects
+- determine which views are being unused
+
+** NOTES ****
+- moira mailing list: cscc-admin (engiarta@mit)
+
+** ACCOMPLISHMENTS **
+- basecase CONTACT page works (needs alignment fixing)
+- fix alignment in admin's "view all tutees" page
+- mailing list "cscc-admin" for tutee and coach 
+- i think i added group checks for each page
+- no_access redirect view
+- fixed ADMIN view of "ticket details" to reflect the full name of the assigned COACH
+- fix layout of TUTEE view of "ticket details"--> all status types
+
+- fix TUTEE tickets view.. and added "cancelled segment"
+  - remove debugging text at bottom
+  - added "selected" class tag
+- logout redirects back to home and display message is shown
+- fix TUTEE home view
+- fix COACH tickets view.. and added "cancelled segment"
+  - remove debugging text at bottom
+  - added "selected" class tag
+- fix ADMIN view of COACH TIX
+- (quick) confirmed with models that new ticket for TUTEE was correct
+
+- sent emails to *Michael*, Anton & Tyler (Bway), Josh (BlackEdge), Alvin

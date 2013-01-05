@@ -24,47 +24,39 @@ function confirmation() {
 {% block content %}
 <div class="container">
 	<div class="span-3"><p></p></div>
-	<div class="example1 pdding prepend-top span-17 last append-bottom">
-		<div class="span-6"><h1><b>ticket details</b></h1></div>
-		<div class="span-5">
-		<form action="/uap_app/tutee/ticket_{{p.id}}/cancel/" method="post">
-			{% csrf_token %}
-			<button id="submit"  class="submit span-6" type="submit" value="submit">CANCEL TICKET</button>
-		</form></div>
-		<hr>
-	<h3 align="center"><b>title</b></h3>
-	<h2 align="center">{{p.title}}</h2><hr>
-	<h3 align="center"><b>details</b></h3>
-	<h2 align="center">{{p.description}}</h2><hr>
-	<h3 align="center"><b>date of interest</b></h3>
-	<h2 align="center">{{p.date_of_interest}}</h2><hr>
-	<h3 align="center"><b>area of interest</b></h3>
-	<h2 align="center">{{p.area_of_interest}}</h2><hr>
-	<h3 align="center"><b>electrical engineering related</b></h3>
-	<h2 align="center">{{p.ee_related}}</h2><hr>
-	<h3 align="center"><b>computer science related</b></h3>
-	<h2 align="center">{{p.cs_related}}</h2><hr>
-	<h3 align="center"><b>status</b></h3>
-	<h2 align="center">{{stat}}</h2><hr>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>ticket details </b> {% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit">ASSIGN COACH </button></form>{% endif %}</h1> <hr>
+	<div class="span-14 prepend-3 last">
+	<h3 align=""><b>conference talk title</b></h3>
+	<h2 align="">{{p.title}}</h2><hr>
+	<h3 align=""><b>paper abstract</b></h3>
+	<h3 style="color:black" align="">{{p.description}}</h3><hr>
+	<h3 align=""><b>approximate conference presentation date</b></h3>
+	<h2 align="">{{p.date_of_interest}}</h2><hr>
+	<h3 align=""><b>area of interest</b></h3>
+	<h2 align="">{{p.area_of_interest}}</h2><hr>
+
+	<h3 align=""><b>status</b></h3>
+	<h2 align="">{{p.get_status_display}}</h2><hr>
+	</div>
 	<h2><b>meeting details</b></h2><hr>
-	<h3 align="center"><b>coach</b></h3>
-	<h2 align="center">{{p.coach}}</h2><hr>
-	<h3 align="center"><b>meeting date</b></h3>
-	<h2 align="center">{{p.meeting_date}}</h2><hr>
-	<h3 align="center"><b>meeting duration (in minutes)</b></h3>
-	<h2 align="center">{{p.meeting_duration}}</h2><hr>
-	<h3 align="center"><b>meeting details</b></h3>
-	<h2 align="center">{{p.meeting_details}}</h2><hr>
-	<h3 align="center"><b>video</b></h3>
-	<h2 align="center">{{p.video}}</h2><hr>
-	{% if confirm %}
-	<form action="/uap_app/tutee/ticket_{{c.id}}/confirm/">
-		{% csrf_token %}
-		<button id="submit" style="width:280px" class="submit center span-4" type="submit" value="submit">CONFIRM MEETING DETAILS</button>
-	</form>
-	{% endif %}
+	<div class="span-14 prepend-3 last">
+		<div class "span-2 append-1">
+			<h3 align=""><b>coach</b></h3>
+			<h2 align="">{{p.coach.user.first_name}} {{p.coach.user.last_name}}</h2>
+		</div>
+		<div class="span-2 last"> 
+			{% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit ">ASSIGN COACH </button>{% endif %}
+		</div><hr>
+	<h3 align=""><b>meeting date</b></h3>
+	<h2 align="">{{p.meeting_date}}</h2><hr>
+	<h3 align=""><b>meeting duration (in minutes)</b></h3>
+	<h2 align="">{{p.meeting_duration}}</h2><hr>
+	<h3 align=""><b>meeting details</b></h3>
+	<h2 align="">{{p.meeting_details}}</h2><hr>
+	<h3 align=""><b>video</b></h3>
+	<h2 align="">{{p.video}}</h2><hr>
+	</div>
 </div>
 </div>
-
-
 {% endblock %}

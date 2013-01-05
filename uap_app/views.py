@@ -13,7 +13,21 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
 
+@login_required
+def no_access(request):
+    # users should be one of three types: ADMIN, TUTEE, COACH
+    if request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/uap_app/tutee/home/')
+    elif request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/uap_app/coach/home/')
+    elif request.user.is_superuser:
+        return HttpResponseRedirect('/uap_app/admin/home/')
+    else:
+        return HttpResponseRedirect('/uap_app/logout')
+
 def basecase_home(request):
+    if request.user.is_superuser:
+        return HttpResponseRedirect('/uap_app/admin/home/')
     form = TuteeUserForm()
     return render_to_response('home.html', {'form': form}, context_instance=RequestContext(request))
 
@@ -73,6 +87,7 @@ def tutee_signup(request):
             tu.first_name = str(d['first_name']) 
             tu.last_name = str(d['last_name'])
             tu.email = str(d['email'])
+            tu.groups.add(Group.objects.get(name='tutee'))
             tu.save()
             ttu = TuteeUser()
             ttu.user = tu
@@ -129,7 +144,12 @@ def tutee_agreement(request):
             return render_to_response('tutee_signup.html', {'form':form}, context_instance=RequestContext(request))
     form = ValidateAgreementForm()
     return render_to_response('agreement.html', {'form':form, 'new_user_data':new_user_data}, context_instance=RequestContext(request))    
-    
+
+@login_required    
+def view_tutee_agreement(request):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
+    return render_to_response('view_agreement.html', context_instance = RequestContext(request))
 
 def logging_in(request):
     if request.method=="POST":
@@ -168,14 +188,27 @@ def logging_in(request):
 
 def logging_out(request):
     logout(request)
-    return render_to_response('logout.html', context_instance=RequestContext(request))
+    messages.success(request, 'You have been successfully logged out; please come back soon!')
+    return render_to_response('login.html', context_instance=RequestContext(request))
+
+def basecase_contact(request):
+    if request.method=="POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            email = EmailMessage('[CSCC CONTACT FORM] '+request.POST['subject'], 'SENT FROM: '+str(request.POST['name'])+', EMAIL: '+ str(request.POST['email'])+'\n\n'+request.POST['message'], to=["cscc-admin@mit.edu"])
+            email.send()
+            messages.success(request, 'Your message to CSCC has been sent')
+            return HttpResponseRedirect("/uap_app/")
+    form = ContactForm()
+    return render_to_response('contact.html', {'form': form}, context_instance=RequestContext(request))
     
 """
 A TuteeUser opens a new project; new project is created IF no open projects
 """
+@login_required
 def new_project_added(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/uap_app/login')
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/ id="submit" class="submit center"/')
     if request.method =='POST':
         if form.is_valid():
             if curruser.open_project == False:  #CURRENT USER
@@ -192,6 +225,8 @@ def new_project_added(request):
     
 @login_required
 def new_project(request):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     curruser = request.user.tuteeuser
     if request.method == 'POST':
         form = TicketForm(request.POST)
@@ -229,23 +264,31 @@ def new_project(request):
     form = TicketForm()
     return render_to_response('new_project.html', {'form': form}, context_instance=RequestContext(request))
     
+@login_required
 def home_success(request):
     messages.success(request, 'You have successfully created a new Project')
     print "********"+ request.user.username + " is logged in"
     return render_to_response('homebase.html', context_instance=RequestContext(request))
-    
+ 
+@login_required    
 def home_success_tutee(request):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     messages.success(request, 'You have successfully created a new Project')
     print "********"+ request.user.username + " is logged in"
     return render_to_response('homebase.html', {'request':request}, context_instance=RequestContext(request))
 
 @login_required    
 def home_tutee(request):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     print "********"+ request.user.username + " is logged in"
-    new = [1]
+    new = [1]       # hack: to check if tutee has open project
     tickets = []
     current = None
     if request.user.tuteeuser.open_project:
+        #if request.user.tuteeuser.get(user = request.user) == None:
+         #   print "NONE"
         new.remove(1)
         tickets = list(request.user.tuteeuser.ticket_set.all())
         for each in tickets:
@@ -255,11 +298,15 @@ def home_tutee(request):
     
 @login_required    
 def home_coach(request):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
     print "********"+ request.user.username + " is logged in"
     return render_to_response('home_coach.html', {'request':request}, context_instance=RequestContext(request))
     
 @login_required    
 def home_admin(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     print "********"+ request.user.username + " is logged in"
     return render_to_response('home_admin.html', {'request':request}, context_instance=RequestContext(request))
 
@@ -276,17 +323,23 @@ def create_coach(request):
         
 
 # manipulate the details and add a note
+@login_required
 def project_details_admin(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     p = Project.objects.get(id=1)
     return render_to_response('project_details.html', {'p': p}, context_instance=RequestContext(request))
 
 
 @login_required
 def all_requests_tutee(request):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     u = request.user
     t = u.tuteeuser
     past_tix = list(t.ticket_set.all())
     curr = []
+    cancelled=[]
     create = [1]
 
     if t.open_project:
@@ -296,12 +349,18 @@ def all_requests_tutee(request):
                 curr.append(each)
                 past_tix.remove(each)
                 break
+        for each in past_tix:
+            if each.status =='CNL':
+                cancelled.append(each)
+                past_tix.remove(each)
 
-    return render_to_response('all_projects_tutee.html', {'u': u, 't':t, 'projects':past_tix, 'curr':curr, 'create': create}, context_instance=RequestContext(request)) 
+    return render_to_response('all_projects_tutee.html', {'u': u, 't':t, 'cancelled': cancelled, 'projects':past_tix, 'curr':curr, 'create': create}, context_instance=RequestContext(request)) 
     
         
 @login_required
 def all_requests_coach(request):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
     u = request.user
     c = u.coachuser
     prev_tix = list(c.ticket_set.all())
@@ -320,8 +379,8 @@ def all_requests_coach(request):
 
 @login_required    
 def project_tutee(request, pid = "nope"):
-    if request.user.groups.filter(name='tutee').exists() != True:
-        return HttpResponseRedirect('uap_app/home/')
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request))
     confirm = []
@@ -346,6 +405,8 @@ def project_tutee(request, pid = "nope"):
    
 @login_required
 def cancel_ticket(request, pid="no"):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit()==False:
         return render_to_response('/uap_app/tutee/home')
     t = Ticket.objects.get(id=int(pid))
@@ -357,8 +418,9 @@ def cancel_ticket(request, pid="no"):
     messages.success(request, 'Ticket has been successfully cancelled')
     return HttpResponseRedirect("/uap_app/tutee/home")
     
+## NEEDS TO BE CORRECTED??    
 @login_required
-def cancel_ticket(request, pid="no"):
+def cancel_ticket_INCORRECT(request, pid="no"):
     if pid.isdigit()==False:
         return render_to_response('/uap_app/tutee/home')
     t = Ticket.objects.get(id=int(pid))
@@ -377,19 +439,21 @@ def cancel_ticket(request, pid="no"):
 
 @login_required    
 def project_coach(request, pid = "nope"):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return render_to_response('/uap_app/home/failure', context_instance = RequestContext(request))
     if request.method =='POST':
-        form = WithdrawNoteForm(request.POST)
+        form = TicketNoteForm(request.POST)
         if form.is_valid():
-            note = ReassignNote(coach = request.user.coachuser, project = Project.objects.get(id=int(pid)), details = request.POST['details'])
+            note = TicketNote(coach = request.user.coachuser, ticket = Project.objects.get(id=int(pid)), details = request.POST['details'])
             p = Ticket.objects.get(id=int(pid))
             p.status = 7
             p.save()
             messages.success(request, 'Your Profile has been successfully updated')
             return HttpResponseRedirect("/uap_app/coach/home")
     else:
-        form = WithdrawNoteForm()
+        form = TicketNoteForm()
     to_submit = []
     details = []
     withdraw = []
@@ -412,35 +476,15 @@ def project_coach(request, pid = "nope"):
    
 @login_required
 def tutee_profile(request):
-    u = request.user
-    t = u.tuteeuser
-    if request.method =='POST':
-        form = TuteeUserProfileForm(request.POST)
-        if form.is_valid():
-            u.email = request.POST['email']
-            u.save()
-            if request.POST.has_key('ee_request')==False:
-                t.ee_request = False
-            else:
-                t.ee_request = request.POST['ee_request']
-            if request.POST.has_key('cs_request')==False:
-                t.cs_request = False
-            else:
-                t.cs_request = request.POST['cs_request']
-            t.area_of_interest = request.POST['area_of_interest']
-            t.research_advisor = request.POST['research_advisor']
-            t.research_advisor_email = request.POST['research_advisor_email']
-            t.phone = request.POST['phone']
-            t.save()
-            messages.success(request, 'Your Profile has been successfully updated')
-            return render_to_response('tutee_profile.html', {'t':t, 'request':request, 'u':u}, context_instance=RequestContext(request))
-    else:
-        initial=dict(email = u.email, phone = t.phone, research_advisor = t.research_advisor, research_advisor_email = t.research_advisor_email, ee_request = t.ee_request, cs_request = t.cs_request, area_of_interest = t.area_of_interest)
-        form = TuteeUserProfileForm(initial)
-    return render_to_response('tutee_profile.html', {'form':form, 't':t, 'request':request, 'u':u}, context_instance=RequestContext(request))
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
+    form = ChangePasswordForm()
+    return render_to_response('tutee_profile.html', {'form':form, 'request':request,}, context_instance=RequestContext(request))
     
 @login_required
 def coach_profile(request):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
     u = request.user
     t = u.coachuser
     if request.method =='POST':
@@ -468,6 +512,8 @@ def coach_profile(request):
     
 @login_required
 def submit_mtg_details(request, pid = "nope"):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS  
     p=Project.objects.get(id=pid)
@@ -497,13 +543,12 @@ def handle_uploaded_file(file):
 
 @login_required        
 def report_coach(request):
-    admin_email = ['eunicegiarta@gmail.com']
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
+    admin_email = "cscc-admin@mit.edu"
     if request.method == 'POST':
         form = EmailAdminForm(request.POST)
         if form.is_valid():
-            admin = list(User.objects.filter(is_staff=True))
-            for each in admin:
-                admin_email.append(each.email)
             email = EmailMessage('[CSCC PROBLEM REPORT] '+request.POST['subject'], 'SENT FROM COACH USERNAME: '+str(request.user.username)+', EMAIL: '+ str(request.user.email)+'\n\n'+request.POST['message'], to=admin_email)
             email.send()
             messages.success(request, 'Report notification sent to ADMIN')
@@ -514,15 +559,14 @@ def report_coach(request):
 
 @login_required        
 def report_tutee(request):
-    admin_email = ['eunicegiarta@gmail.com']  #add myself for debugging purposes
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
+    admin_email = "cscc-admin@mit.edu"
     if request.method == 'POST':
         form = EmailAdmin(request.POST)
         if form.is_valid():
-            admin = list(User.objects.filter(is_staff=True))
-            for each in admin:
-                admin_email.append(each.email)
-                email = EmailMessage('[CSCC PROBLEM REPORT] '+request.POST['subject'], 'SENT FROM TUTEE USERNAME: '+str(request.user.username)+', EMAIL: '+ str(request.user.email)+'\n\n'+request.POST['message'], to=admin_email)
-                email.send()
+            email = EmailMessage('[CSCC PROBLEM REPORT] '+request.POST['subject'], 'SENT FROM TUTEE USERNAME: '+str(request.user.username)+', EMAIL: '+ str(request.user.email)+'\n\n'+request.POST['message'], to=admin_email)
+            email.send()
             messages.success(request, 'Report notification sent to ADMIN')
             return HttpResponseRedirect("/uap_app/tutee/home")
     else:
@@ -531,18 +575,27 @@ def report_tutee(request):
 
 @login_required 
 def admin_view_requests(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    for each in Ticket.objects.all():
+        print each.status
     to_assign = list(Ticket.objects.filter(status='NAS'))
-    assigned = list(Ticket.objects.filter(status='TAS'))
+    assigned = list(Ticket.objects.filter(status='CAS'))
     submitted = list(Ticket.objects.filter(status='CSB'))
     approval = list(Ticket.objects.filter(status='TAP'))
     return render_to_response('all_projects_admin.html', { 'to_assign': to_assign, 'assigned': assigned, 'submitted': submitted, 'approval': approval}, context_instance = RequestContext(request))
+
+## NEED TO CORRECT THIS
 def confirm_ticket(request, pid="none"):
     return 
-    
+
+@login_required    
 def admin_coach_requests(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     req = list(CoachRequest.objects.filter(status='OP'))
     return render_to_response('view_coach_requests.html', {'req':req}, context_instance = RequestContext(request))
-    
+
 def assignment_email(tutee, coach):
     for_tutee = "Hi "+ str(tutee.user.first_name)+"! \n \nThank you for being a part of the Course 6 Communication Center (CSCC).  You have been assigned to a coach for your recent request.  It is your responsibility to contact your coach directly and arrange the details of a meeting. \n \nYour coach is "+str(coach.user.first_name)+" "+str(coach.user.last_name)+" and can they can be reached via "+str(coach.user.email)+". \n  \nThank you, from the CSCC Team! \n \nNote: Please do not respond to this email as it is not monitored."
     for_coach = "Hi "+ str(coach.user.first_name)+"! \n  \nThank you for being a part of the Course 6 Communication Center (CSCC).  You have been assigned to a new request.  It is your responsibility to contact your tutee directly and arrange the details of a meeting. \n \nYour tutee is "+str(tutee.user.first_name)+" "+str(tutee.user.last_name)+" and can they can be reached via "+str(tutee.user.email)+". \n  \nThank you, from the CSCC Team! \n \nNote: Please do not respond to this email as it is not monitored."
@@ -550,6 +603,8 @@ def assignment_email(tutee, coach):
 
 @login_required
 def assign_coach(request, pid="nope"):
+    if not request.user.groups.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
     p = Project.objects.get(id=int(pid))
@@ -573,7 +628,7 @@ def assign_coach(request, pid="nope"):
 @login_required
 def admin_view_request(request, pid="nope"):
     if request.user.is_superuser !=True:
-        return HttpResponseRedirect('/uap_app/logout')
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit()==False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
     p = Ticket.objects.get(id=int(pid))
@@ -584,29 +639,30 @@ def admin_view_request(request, pid="nope"):
         
 @login_required
 def admin_all_tutee(request):
-    if request.user.is_superuser != True:
-        return HttpResponseRedirect('/uap_app/logout/')
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     tutees = TuteeUser.objects.all()
     return render_to_response('admin_all_tutee.html', {'tutees': tutees}, context_instance = RequestContext(request))
     
 @login_required
 def admin_all_coach(request):
-    if request.user.is_superuser != True:
-        return HttpResponseRedirect('/uap_app/logout/')
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     coaches = CoachUser.objects.all()
     return render_to_response('admin_all_coach.html', {'coaches': coaches}, context_instance = RequestContext(request))
 
 @login_required
 def add_coach(request, pid):
     r = CoachRequest.objects.get(id=int(pid))
-    if request.user.is_superuser != True:
-        return HttpResponseRedirect('/uap_app/logout/')
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
     password = User.objects.make_random_password()
     new = User.objects.create_user(username=r.athena, email=r.athena+'@mit.edu', password=password)
     new.first_name = r.first_name
     new.last_name = r.last_name
+    new.groups.add(Group.objects.get(name='coach'))
     new.save()
     c = CoachUser()
     c.user = new
@@ -622,8 +678,8 @@ def add_coach(request, pid):
     return HttpResponseRedirect('/uap_app/admin/coach_requests/')
     
 def reject_coach_req(request, pid="none"):
-    if request.user.is_superuser != True:
-        return HttpResponseRedirect('/uap_app/logout/')
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     if pid.isdigit() ==False:
         message.error(request, "ERROR: Incorrect UID for CoachRequest instance")
         return HttpResponseRedirect('/uap_app/admin/home/')
@@ -634,6 +690,8 @@ def reject_coach_req(request, pid="none"):
 
 @login_required
 def admin_profile(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
     u = request.user
     if request.method =='POST':
         form = AdminUserProfileForm(request.POST)
@@ -644,3 +702,53 @@ def admin_profile(request):
     else:
         form = AdminUserProfileForm(initial = dict(email = u.email))
     return render_to_response('admin_profile.html', {'form':form, 'u':u}, context_instance = RequestContext(request))
+
+@login_required
+def admin_view_coach(request, pid="none"):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() ==False:
+        message.error(request, "ERROR: Incorrect UID for Coach instance")
+        return HttpResponseRedirect('/uap_app/admin/home/')
+    c = CoachUser.objects.get(id=int(pid))
+    prev_tix = list(c.ticket_set.all())
+    open_tix = []
+    pending = []
+    
+    for each in prev_tix:
+        if each.status == 'CAS':
+            open_tix.append(each)
+            prev_tix.remove(each)
+        elif each.status == 'CSB':
+            pending.append(each)
+            prev_tix.remove(each)
+        # this leaves 'APR' and 'TAP' and possibly 'CNL' 
+    return render_to_response('admin_view_coach.html', {'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
+    
+def assign_ticket(request, pid="none"):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() ==False:
+        message.error(request, "ERROR: Incorrect UID for Coach instance")
+        return HttpResponseRedirect('/uap_app/admin/home/')
+    coaches = CoachUser.objects.all().order_by('projects_assigned')
+    if request.method == 'POST':
+           cid = int(request.POST['coach'])
+           c = CoachUser.objects.get(id=cid)
+           c.projects_assigned += 1
+           c.save()
+           p = Ticket.objects.get(id=int(pid))
+           p.coach = c
+           p.status ='CAS'
+           p.save()
+           message = assignment_email(p.tutee, p.coach)
+           email_tutee = EmailMessage('[CSCC] You have a Coach!', message[0], to=[str(p.tutee.user.email), 'eunicegiarta@gmail.com'])
+           email_coach = EmailMessage('[CSCC] You have a New Assignment!', message[1], to=[str(p.coach.user.email), 'eunicegiarta@gmail.com'])
+           email_tutee.send()
+           email_coach.send()
+
+           messages.success(request, 'Coach Assignment has beeen made and the TUTEE and COACH have been notified via email')
+           return HttpResponseRedirect("/uap_app/admin/home")
+    
+    return render_to_response('assign_coach.html', {'p':Ticket.objects.get(id=int(pid)), 'coaches':coaches}, context_instance = RequestContext(request))
+    
