@@ -750,4 +750,5 @@ def assign_ticket(request, pid="none"):
            return HttpResponseRedirect("/app_admin/home")
     
     return render_to_response('assign_coach.html', {'p':Ticket.objects.get(id=int(pid)), 'coaches':coaches}, context_instance = RequestContext(request))
-    
+   
+#r 
