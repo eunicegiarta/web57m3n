@@ -144,7 +144,7 @@ button.submit:active {
 	I understand that EECS may contact me after my actual talk, and agree to answer any followup survey questions about how the utility of the coaching session.<br>
 
 </p>
-<form class="signup" action="/uap_app/tutee/signup/validate" method="post">
+<form class="signup" action="/tutee/signup/validate" method="post">
 	{% csrf_token %}
 	{{form.as_p}}
 	<button style="width: 300px;" id="submit" class="submit span-4" type="submit" value="submit">COMPLETE SIGN UP </button>

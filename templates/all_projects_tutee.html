@@ -16,7 +16,7 @@
 			<h4><b>{{ c.title }}</b>--({{c.date_of_interest}})<br>{{c.area_of_interest}}</h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/tutee/ticket_{{c.id}}">
+			<form action="/tutee/ticket_{{c.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
@@ -24,7 +24,7 @@
 		{% endfor %}
 	{% else %}
 	<h4 align="center">You have no open tickets.</h4>
-	<form action="/uap_app/tutee/new_ticket/">
+	<form action="/tutee/new_ticket/">
 	<button id="submit" class="submit center span-4" type="submit" value="submit">CREATE NEW TICKET</button>
 	</form>
 	{% endif %}
@@ -39,7 +39,7 @@
 			<h4><b>{{ p.title }}</b>--{{p.meeting_date}}<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
+			<form action="/tutee/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
@@ -52,7 +52,7 @@
 			<h4><b>{{ p.title }}</b> [CANCELLED]<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
+			<form action="/tutee/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
@@ -67,7 +67,7 @@
 			<h4><b>{{ p.title }}</b> [CANCELLED]<br>coach: {{p.coach.user.first_name}} {{p.coach.user.last_name}}</h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/tutee/ticket_{{p.id}}">
+			<form action="/tutee/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>

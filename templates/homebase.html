@@ -11,7 +11,7 @@
 </ul>
 {% endif %}
 
-<form action="/uap_app/tutee_agreement/">
+<form action="/tutee_agreement/">
 	<button id="submit" class="submit center">VIEW TUTEE AGREEMENT</button>
 </form>
 <div class="container">
@@ -26,7 +26,7 @@
 		<h4><b>{{ current.title }}</b>--({{current.date_of_interest}})<br>{{current.area_of_interest}}</h4>
 	</div>
 	<div class="prepend-1 span-5 last">
-		<form action="/uap_app/tutee/ticket_{{current.id}}">
+		<form action="/tutee/ticket_{{current.id}}">
 			<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 		</form>
 	</div>
@@ -43,7 +43,7 @@
 		<h4>Looks like you don't have any open tickets--open a new one now!</h4>
 	</div>
 	<div class="span-15 last">
-		<form action="/uap_app/tutee/new_ticket/">
+		<form action="/tutee/new_ticket/">
 			<button id="submit" style="width:200px" class="submit center" type="submit" value="submit">CREATE TICKET</button>
 		</form>
 	</div>

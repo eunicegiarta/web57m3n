@@ -17,7 +17,7 @@
 			<h4><b>{{ t.title }}</b>--({{t.date_of_interest}})<br>tutee: <b>{{t.tutee.user.first_name}} {{t.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/coach/ticket_{{t.id}}">
+			<form action="/coach/ticket_{{t.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
@@ -37,7 +37,7 @@
 			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/coach/ticket_{{p.id}}">
+			<form action="/coach/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
@@ -56,7 +56,7 @@
 			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/uap_app/coach/ticket_{{p.id}}">
+			<form action="/coach/ticket_{{p.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>

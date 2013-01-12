@@ -106,7 +106,7 @@ button.submit:active {
 <div class="pdding example1 prepend-1 span-6 append-1 prepend-top append-bottom">
 	<h3><b>Undergraduate?</b></h3>
 	<p>Make your contribution to the Course Six Communication Center online community as a Coach!</p>
-	<form class="login" action="/uap_app/coach/request/">
+	<form class="login" action="/coach/request/">
 		{% csrf_token %}
 		<button id="submit" class="submit span-4" type="submit" value="submit">APPLY TO COACH</button>
 	</form>
@@ -115,7 +115,7 @@ button.submit:active {
 <div class="span-1"><p></p></div>
 <div class="example1 pdding prepend-1 span-11 prepend-top append-bottom last">
 	<h2> Graduate Student and new to CSCC?  Signing up is <b>easy</b>!</h2>
-	<form class="signup" action="/uap_app/tutee/agreement/" method="post">
+	<form class="signup" action="/tutee/agreement/" method="post">
 		{% csrf_token %}
 	{{form.as_p}}
 	<button style="width: 300px;" id="submit" class="submit span-4" type="submit" value="submit">SIGN UP </button>
