@@ -8,24 +8,24 @@ h3 {
 {% block js %}
 
 function confirmation() {
-	var answer = confirm("Are you sure you want to cancel this ticket?")
+	var answer = confirm("Are you sure you want to cancel this ticket? Click OK to confirm cancellation, and CANCEL to abort.");
 	if (answer){
-		window.location.href = "google.com";
+		window.location = "ticket_{{p.id}}/cancel/";
 	}
 	else{
-		window.location = "localhost:8000/uap_app/tutee/ticket_{{p.id}}";
+		window.location = "ticket_{{p.id}}";
 		}
 }
 
 {% endblock %}
 
-{% block requests %}class="selected"{% endblock %}
+{% block tickets %}class="selected"{% endblock %}
 
 {% block content %}
 <div class="container">
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
-	<h1><b>ticket details </b> {% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit">ASSIGN COACH </button></form>{% endif %}</h1> <hr>
+	<h1><b>ticket details </b> {% if cancellable %}<br><a><button class="submit" onclick="return confirmation()">CANCEL TICKET</button></a>{% endif %}</h1> <hr>
 	<div class="span-14 prepend-3 last">
 	<h3 align=""><b>conference talk title</b></h3>
 	<h2 align="">{{p.title}}</h2><hr>

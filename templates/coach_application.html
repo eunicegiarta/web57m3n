@@ -19,8 +19,10 @@
 {% endif %}
 <div class="container">
 		<div class="span-3"><p></p></div>
-	<div class="login example1 pdding prepend-4 append-1 span-17 last">
-		<h1><b>coach application</b></h1><hr>
+	<div class="login example1 pdding prepend-top append-1 span-17 last">
+		<h1><b>coach application</b></h1>
+		<h4>As an undergraduate, be a part of CSCC by applying for a coaching position!<br>
+		<a href="/uap_app/tutee/signup/">I am a graduate student.</a></h4><hr>
 		<form class="login center" action="/uap_app/coach/request/" method="post">
 			{% csrf_token %}
 			{{form.as_p}}
