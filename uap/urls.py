@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^no_access/$', 'uap_app.views.no_access' ),
     
     #TUTEE and BASIC
+    url(r'^tutee/upload_test/$', 'uap_app.views.upload_handler'),
     url(r'^$', 'uap_app.views.basecase_home' ),
     url(r'^tutee/signup/$', 'uap_app.views.basecase_signup_tutee' ),
     url(r'^coach/request/$', 'uap_app.views.basecase_coach_application' ),
