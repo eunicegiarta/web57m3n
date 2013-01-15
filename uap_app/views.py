@@ -121,9 +121,8 @@ def tutee_signup(request):
             ttu.phone = str(d['phone'])
             ttu.save()
             messages.success(request, 'You have successfully signed up!  Please login to your account')
-            # FIX UNCOMMENT FOR USE!!
-            #email = EmailMessage('[CSCC] Welcome, '+tu.first_name+'!', 'Hi '+tu.first_name+'! \n \nWelcome to CSCC.  You have successfully signed up as a Tutee!  Log in to open a new ticket and get matched with a personal Coach. \n \nusername: '+tu.username+'\npassword: '+str(d['password'])+'\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.', to=[tu.email])
-            #email.send()
+            email = EmailMessage('[CSCC] Welcome, '+tu.first_name+'!', 'Hi '+tu.first_name+'! \n \nWelcome to CSCC.  You have successfully signed up as a Tutee!  Log in to open a new ticket and get matched with a personal Coach. \n \nusername: '+tu.username+'\npassword: '+str(d['password'])+'\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.', to=[tu.email])
+            email.send()
             return HttpResponseRedirect("/accounts/login/")
         else:
             messages.error(request, "NOTE: You must acknowledge and agree with the terms below to continue.")
@@ -796,9 +795,8 @@ def add_coach(request, pid):
     c.save()
     r.status = 'AC'
     r.save()
-    ## FIX UNCOMMENT WHEN IN PRODUCTION
-    #email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "Welcome to the CSCC community, "+new.first_name"!\nWe will contact you when an assignment has been made.  You can also check your assignments by logging in. \n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.", to=[new.email])
-    #email_coach.send()
+    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "Welcome to the CSCC community, "+new.first_name"!\nWe will contact you when an assignment has been made.  You can also check your assignments by logging in. \n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.", to=[new.email])
+    email_coach.send()
     messages.success(request, str(new.username)+" has been assigned as coach and notified by email.")
     return HttpResponseRedirect('/app_admin/coach_requests/')
 
@@ -903,7 +901,6 @@ def view_coach_hours(request, pid="none"):
     return render_to_response('admin_view_coach_hours.html', {'request':request, 'c':c, 'dets':dets, 'hrs_approve': hrs_approve, 'hrs_pending':hrs_pending, 'hrs_reject': hrs_reject}, context_instance=RequestContext(request))
     
    
-##NOTE: need to remove my email from this!! FIX  
 @login_required  
 def assign_ticket(request, pid="none"):
     if not request.user.is_superuser:
@@ -922,8 +919,8 @@ def assign_ticket(request, pid="none"):
            p.status ='CAS'
            p.save()
            message = assignment_email(p.tutee, p.coach)
-           email_tutee = EmailMessage('[CSCC] You have a Coach!', message[0], to=[str(p.tutee.user.email), 'eunicegiarta@gmail.com'])
-           email_coach = EmailMessage('[CSCC] You have a New Assignment!', message[1], to=[str(p.coach.user.email), 'eunicegiarta@gmail.com'])
+           email_tutee = EmailMessage('[CSCC] You have a Coach!', message[0], to=[str(p.tutee.user.email)])
+           email_coach = EmailMessage('[CSCC] You have a New Assignment!', message[1], to=[str(p.coach.user.email)])
            email_tutee.send()
            email_coach.send()
 
@@ -944,9 +941,8 @@ def add_new_admin(request):
             new.first_name = request.POST['first_name']
             new.last_name = request.POST['last_name']
             new.save()
-            # FIX UNCOMMENT TO ENABLE EMAIL
-            #email_new_admin = EmailMessage('[CSCC] Congratulations, you are now an ADMIN for CSCC!', "Welcome to the CSCC community, "+new.first_name+"!\nYou can access your account with the following login information:\n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks for joining us,\nThe CSCC Team (+ you)\n\n\nDo not respond to this email as it is unmoderated.", to=[new.email])
-            #email_new_admin.send()
+            email_new_admin = EmailMessage('[CSCC] Congratulations, you are now an ADMIN for CSCC!', "Welcome to the CSCC community, "+new.first_name+"!\nYou can access your account with the following login information:\n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks for joining us,\nThe CSCC Team (+ you)\n\n\nDo not respond to this email as it is unmoderated.", to=[new.email])
+            email_new_admin.send()
             messages.success(request, "A new ADMIN account has been created and an email has been sent notifying "+new.first_name+" about their new position.")
             HttpResponseRedirect("/app_admin/home/")
     else:
