@@ -795,7 +795,7 @@ def add_coach(request, pid):
     c.save()
     r.status = 'AC'
     r.save()
-    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "Welcome to the CSCC community, "+new.first_name"!\nWe will contact you when an assignment has been made.  You can also check your assignments by logging in. \n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.", to=[new.email])
+    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "Welcome to the CSCC community, "+new.first_name+"!\nWe will contact you when an assignment has been made.  You can also check your assignments by logging in. \n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.", to=[new.email])
     email_coach.send()
     messages.success(request, str(new.username)+" has been assigned as coach and notified by email.")
     return HttpResponseRedirect('/app_admin/coach_requests/')
