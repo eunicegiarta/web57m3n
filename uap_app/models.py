@@ -208,7 +208,7 @@ class ChangePasswordForm(forms.Form):
 class ValidateAgreementForm(forms.Form):
     agree = forms.BooleanField(required=True, label="I have read and agree with the terms and conditions outlined above")
     
-class NewAdminForm(forms.Form)
+class NewAdminForm(forms.Form):
     username = forms.CharField(label="Athena Username")
     first_name = forms.CharField()
     last_name = forms.CharField()

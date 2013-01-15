@@ -69,11 +69,13 @@ button.submit:active {
 {% block login %}class="selected"{% endblock %}
 
 {% block content %}
-{% if messages%}
-{%for message in messages%}
-    <p style="background:#aef18d; color:green" class="success" id="success_id success" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
-{%endfor%}
-{%endif%}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <div class="span-7">
 	<p></p>
@@ -91,7 +93,7 @@ button.submit:active {
 		</p>
 		<button id="submit" class="submit span-4" type="submit" value="submit">SIGN IN </button>
 	</form>
-	<hr/>
+	<a href='/login/pw_request/'>Forgot password?</a><hr/>
 </div>
 
 {% endblock %}

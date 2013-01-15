@@ -194,6 +194,21 @@ def logging_out(request):
     messages.success(request, 'You have been successfully logged out; please come back soon!')
     return render_to_response('login.html', context_instance=RequestContext(request))
 
+def pw_request(request):
+    if request.method=='POST':
+        if User.objects.filter(username=request.POST['username']).exists():
+            u = User.objects.get(username=request.POST['username'])
+            password = User.objects.make_random_password()
+            u.set_password = password
+            u.save()
+            email = EmailMessage('[CSCC] Password Reset', 'You have requested a new password. \n\n'+password+'\n\nPlease login with this new password and change it from the PROFILE page. \n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.', to=[u.email])
+            email.send()
+            messages.success(request,"Your password has been reset and an email will be sent to you shortly.")
+        else:
+            messages.error(request,"We cannot find that username in our system.  Please sign up for CSCC!")
+        return HttpResponseRedirect('/accounts/login/')
+    return render_to_response('new_password.html', {'request': request}, context_instance=RequestContext(request))
+
 def admin_logout(request):
     return HttpResponseRedirect('/logout/')
 
@@ -283,7 +298,11 @@ def home_coach(request):
 def home_admin(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
-    return render_to_response('home_admin.html', {'request':request}, context_instance=RequestContext(request))
+    req = list(CoachRequest.objects.filter(status='OP'))
+    to_assign = list(Ticket.objects.filter(status='NAS'))
+    to_review = list(Ticket.objects.filter(status='TCF'))
+    num_no = len(req) + len(to_assign) + len(to_review)
+    return render_to_response('home_admin.html', {'request':request, 'req':req, 'to_assign':to_assign, 'to_review':to_review, 'num_no': num_no}, context_instance=RequestContext(request))
 
 def home_failure(request):
     print "********"+ request.user.username + " is logged in"
@@ -342,15 +361,16 @@ def all_requests_coach(request):
     prev_tix = list(c.ticket_set.all())
     open_tix = []
     pending = []
-    
     for each in prev_tix:
         if each.status == 'CAS':
             open_tix.append(each)
             prev_tix.remove(each)
-        elif each.status == 'CSB':
+        elif each.status == 'CSB' or each.status=='TCF':
             pending.append(each)
             prev_tix.remove(each)
-        # this leaves 'APR', 'NAP', and 'TCF' and possibly 'CNL' 
+        elif each.status =='CNL':
+            prev_tix.remove(each)
+        # this leaves 'APR' and 'NAP' 
     return render_to_response('all_projects_coach.html', {'u': u, 'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
 
 @login_required    
@@ -510,6 +530,17 @@ def coach_withdraw_ticket(request, pid="nope"):
 def tutee_profile(request):
     if not request.user.groups.filter(name="tutee").exists():
         return HttpResponseRedirect('/no_access/')
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            #ensure new passwords are identical
+            #NOTE: does NOT currently check if old password is a match
+            if request.POST['new1'] == request.POST['new2']:
+                request.user.set_password(str(request.POST['new1']))
+                request.user.save()
+                messages.success(request, "Your password has been successfully changed.")
+            else:
+                messages.error(request, "Your new passwords do not match.")
     form = ChangePasswordForm()
     return render_to_response('tutee_profile.html', {'form':form, 'request':request,}, context_instance=RequestContext(request))
     
@@ -517,29 +548,19 @@ def tutee_profile(request):
 def coach_profile(request):
     if not request.user.groups.filter(name="coach").exists():
         return HttpResponseRedirect('/no_access/')
-    u = request.user
-    t = u.coachuser
-    if request.method =='POST':
-        form = CoachUserProfileForm(request.POST)
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
         if form.is_valid():
-            u.email = request.POST['email']
-            u.save()
-            if request.POST.has_key('ee_help')==False:
-                t.ee_help = False
+            #ensure new passwords are identical
+            #NOTE: does NOT currently check if old password is a match
+            if request.POST['new1'] == request.POST['new2']:
+                request.user.set_password(str(request.POST['new1']))
+                request.user.save()
+                messages.success(request, "Your password has been successfully changed.")
             else:
-                t.ee_help = request.POST['ee_help']
-            if request.POST.has_key('cs_help')==False:
-                t.cs_help = False
-            else:
-                t.cs_help = request.POST['cs_help']
-            t.phone = request.POST['phone']
-            t.save()
-            messages.success(request, 'Your Profile has been successfully updated')
-            return render_to_response('coach_profile.html', {'t':t, 'request':request, 'u':u}, context_instance=RequestContext(request))
-    else:
-        initial=dict(email = u.email, phone = t.phone, ee_help = t.ee_help, cs_help = t.cs_help)
-        form = CoachUserProfileForm(initial)
-    return render_to_response('coach_profile.html', {'form':form, 't':t, 'request':request, 'u':u}, context_instance=RequestContext(request))
+                messages.error(request, "Your new passwords do not match.")
+    form = ChangePasswordForm()
+    return render_to_response('coach_profile.html', {'form':form, 'request':request,}, context_instance=RequestContext(request))
 
     
 @login_required
@@ -657,6 +678,9 @@ def confirm_ticket(request, pid="none"):
     tix = Ticket.objects.get(id=int(pid))
     tix.status = 'TCF'
     tix.save()
+    tuteeuser = TuteeUser.objects.get(user = request.user)
+    tuteeuser.open_project = False
+    tuteeuser.save()
     messages.success(request, "You have accepted the meeting details of this ticket as submitted by your Coach.")
     return HttpResponseRedirect('/tutee/ticket_'+pid)
 
@@ -767,7 +791,7 @@ def add_coach(request, pid):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
-        return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
+        return HttpResponseRedirect('/no_access/')
     password = User.objects.make_random_password()
     new = User.objects.create_user(username=r.athena, email=r.athena+'@mit.edu', password=password)
     new.first_name = r.first_name
@@ -804,16 +828,19 @@ def reject_coach_req(request, pid="none"):
 def admin_profile(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
-    u = request.user
-    if request.method =='POST':
-        form = AdminUserProfileForm(request.POST)
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
         if form.is_valid():
-            u.email = request.POST['email']
-            messages.success(request, 'Profile has been successfully updated')
-            return render_to_response('home_admin.html', {'request':request}, context_instance=RequestContext(request))
-    else:
-        form = AdminUserProfileForm(initial = dict(email = u.email))
-    return render_to_response('admin_profile.html', {'form':form, 'u':u}, context_instance = RequestContext(request))
+            #ensure new passwords are identical
+            #NOTE: does NOT currently check if old password is a match
+            if request.POST['new1'] == request.POST['new2']:
+                request.user.set_password(str(request.POST['new1']))
+                request.user.save()
+                messages.success(request, "Your password has been successfully changed.")
+            else:
+                messages.error(request, "Your new passwords do not match.")
+    form = ChangePasswordForm()
+    return render_to_response('admin_profile.html', {'form':form, 'request':request,}, context_instance=RequestContext(request))
 
 @login_required
 def admin_approve_ticket(request, pid="none"):
@@ -860,6 +887,31 @@ def admin_view_coach(request, pid="none"):
             prev_tix.remove(each)
         # this leaves 'APR', 'NAP', and 'TCF' and possibly 'CNL' 
     return render_to_response('admin_view_coach.html', {'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
+    
+@login_required
+def view_coach_hours(request, pid="none"):
+    if not request.user.is_superuser:
+        return HttpdResponseRedirect('/no_access/')
+    if pid.isdigit() == False:
+        return HttpResponseRedirect('/no_access/')
+    c = CoachUser.objects.get(id=int(pid))
+    tix = list(c.ticket_set.filter(status='APR')) + list(c.ticket_set.filter(status='NAP')) + list(c.ticket_set.filter(status='TCF'))
+    dets = []
+    hrs_approve = 0
+    hrs_pending = 0
+    hrs_reject = 0
+    for each in tix:
+        dets.append(each.ticketdetails)
+        if each.status =='APR':
+            hrs_approve += each.ticketdetails.meeting_duration/60.0
+        elif each.status =='TCF':
+            hrs_pending += each.ticketdetails.meeting_duration/60.0
+        elif each.status =='NAP':
+            hrs_reject += each.ticketdetails.meeting_duration/60.0
+    dets.sort(key=lambda r: r.meeting_date)
+    
+    return render_to_response('admin_view_coach_hours.html', {'request':request, 'c':c, 'dets':dets, 'hrs_approve': hrs_approve, 'hrs_pending':hrs_pending, 'hrs_reject': hrs_reject}, context_instance=RequestContext(request))
+    
    
 ##NOTE: need to remove my email from this!! FIX  
 @login_required  
@@ -891,13 +943,22 @@ def assign_ticket(request, pid="none"):
     return render_to_response('assign_coach.html', {'p':Ticket.objects.get(id=int(pid)), 'coaches':coaches}, context_instance = RequestContext(request))
    
 @login_required
-def assign_ticket(request):
+def add_new_admin(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
     if request.method=="POST":
         form = NewAdminForm(request.POST)
         if form.is_valid():
-            new = User()
+            password = User.objects.make_random_password()
+            new = User.objects.create_superuser(username=request.POST['username'], email=request.POST['username']+'@mit.edu', password=password)
+            new.first_name = request.POST['first_name']
+            new.last_name = request.POST['last_name']
+            new.save()
+            # FIX UNCOMMENT TO ENABLE EMAIL
+            #email_new_admin = EmailMessage('[CSCC] Congratulations, you are now an ADMIN for CSCC!', "Welcome to the CSCC community, "+new.first_name+"!\nYou can access your account with the following login information:\n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks for joining us,\nThe CSCC Team (+ you)\n\n\nDo not respond to this email as it is unmoderated.", to=[new.email])
+            #email_new_admin.send()
+            messages.success(request, "A new ADMIN account has been created and an email has been sent notifying "+new.first_name+" about their new position.")
+            HttpResponseRedirect("/app_admin/home/")
     else:
         form = NewAdminForm()
-    return 
+    return render_to_response('admin_add_new.html', {'form':form}, context_instance=RequestContext(request))

@@ -1,0 +1,27 @@
+{% extends "base_admin.html" %}
+{% block home%}class="selected"{% endblock%}
+
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<h1><b>add new admin user</b></h1><hr>
+		
+		<form class="login" action="" method="post" data-ajax="false">
+			{% csrf_token %}
+			{{form.as_p}}
+			<button id="submit" class="submit center span-4" type="submit" value="submit">ADD ADMIN USER </button>
+			
+		</form>
+	
+</div>
+</div>
+{% endblock %}

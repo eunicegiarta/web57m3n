@@ -1,0 +1,59 @@
+{% extends 'base_admin.html' %}
+
+{%block scripts%}
+.APR {
+	color:green;
+}
+.TCF {
+	color:blue;
+}
+.NAP {
+	color:red;
+}
+
+
+{%endblock%}
+
+{%block coaches%}class="selected"{%endblock%}
+
+{% block content %}
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
+		<h1><b>logged hours:</b> {{c.user.first_name}} {{c.user.last_name}}<h1><hr>
+			<h3>Hours Approved: <b>{{hrs_approve}}</b></h3>
+			<h3>Hours Pending: <b>{{hrs_pending}}</b></h3>
+			<h3>Hours Rejected: <b>{{hrs_reject}}</b></h3><hr>
+		
+			<div class=" span-4">
+			<h3><b>meeting date</b><h3>
+			</div>
+			<div class=" span-5">
+			<h3><b>tutee</b><h3>
+			</div>
+			<div class=" span-5">
+			<h3 align="center"><b>status</b><h3>
+			</div>
+			<div class="span-3 last">
+			<h3 align="center"><b>minutes</b><h3>
+			</div><hr>
+		
+		{%for each in dets%}
+		<div class=" span-4">
+		<h3>{{each.meeting_date}}<h3>
+		</div>
+		<div class=" span-5">
+		<h3>{{each.ticket.tutee.user.first_name}} {{each.ticket.tutee.user.last_name}}<h3>
+		</div>
+		<div class=" span-6">
+		<h3>{{each.ticket.get_status_display}}<h3>
+		</div>
+		<div class=" span-2 last">
+		<h3 class="{{each.ticket.status}}"><b>{{each.meeting_duration}}</b><h3>
+		</div><hr>
+		{%endfor%}
+		
+		
+	</div>
+</div>
+{%endblock%}

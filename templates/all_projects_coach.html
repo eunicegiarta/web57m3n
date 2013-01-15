@@ -48,8 +48,8 @@
 	{% endif %}
 	<hr>
 	<h2 align="center"><b>past tickets</b></h2>
-	{% if prev_tix  %}
-	   {% for p in prev_tix %}
+	{% if past  %}
+	   {% for p in past %}
 	
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
 			<div class="span-9 ">
@@ -63,7 +63,7 @@
 		</div>
 		{% endfor %}
 	{% else %}
-	<h4 align="center">You have previous tickets</h4>
+	<h4 align="center">You have no previous tickets</h4>
 	{% endif %}
 	
 </div>
