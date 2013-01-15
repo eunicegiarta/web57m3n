@@ -183,10 +183,10 @@ def logging_in(request):
                     return HttpResponseRedirect('/coach/home/')
                 else:    
                     messages.error(request, 'Login was unsuccessful. Try again, or sign up to start!')
-                    return render_to_response('login.html', context_instance=RequestContext(request))         
+                    return HttpResponseRedirect('/accounts/login/')         
         else:
                 messages.error(request, 'Login information is incorrect')
-                return render_to_response('login.html', context_instance=RequestContext(request))
+                return HttpResponseRedirect('/accounts/login/')
     return render_to_response('login.html', context_instance=RequestContext(request))
 
 def logging_out(request):
@@ -242,16 +242,6 @@ def new_project(request):
                 t.status = 'NAS'
                 t.tutee = curruser
                 t.date_of_interest = form.data['date_of_interest']
-                try: 
-                    form.data['ee_request']         #check if TUTEE indicated EE-related
-                    t.ee_related = True
-                except:
-                    t.ee_related = False
-                try:
-                    form.data['cs_request']         #check if TUTEE indicated CS-related
-                    t.cs_related = True
-                except:
-                    t.cs_related = False
                 t.area_of_interest = form.data['area_of_interest']
                 t.save()
                 curruser.open_project = True
@@ -748,7 +738,7 @@ def admin_view_request(request, pid="nope"):
     if request.user.is_superuser !=True:
         return HttpResponseRedirect('/no_access/')
     if pid.isdigit()==False:
-        return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
+        return HttpResponseRedirect('/no_access')
     p = Ticket.objects.get(id=int(pid))
     tix_details = None
     try:
