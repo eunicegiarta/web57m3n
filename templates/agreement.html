@@ -78,14 +78,14 @@ button.submit:active {
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
     {% endfor %}
 </ul>
 {% endif %}
 
 <div class="container">
 <div class="example1 pdding preprend-1 span-22 append-1 prepend-top append-bottom">
-	<h1><b>agreement guidelines/b></h1><hr>
+	<h1><b>agreement guidelines</b></h1><hr>
 
 	<p>Welcome to the pilot of this free program in which EECS undergraduates help give feedback on your oral presentation.</p>
 

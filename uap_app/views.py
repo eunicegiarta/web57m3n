@@ -12,7 +12,6 @@ from decimal import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
-from filetransfers.api import prepare_upload
 from django.core.urlresolvers import reverse
 
 def upload_handler(request):
@@ -53,7 +52,7 @@ def basecase_coach_application(request):
             n.athena = request.POST['athena_username']
             n.first_name = request.POST['first_name'] 
             n.last_name = request.POST['last_name']
-            n.email = request.POST['email']
+            n.email = request.POST['athena_username']+'@mit.edu'
             n.phone = request.POST['phone']
             n.uat_semester = request.POST['uat_semester']
             n.uat_year =request.POST['uat_year']
@@ -100,7 +99,7 @@ def tutee_signup(request):
             tu = User.objects.create_user(username = str(d['username']), password=str(d['password']))
             tu.first_name = str(d['first_name']) 
             tu.last_name = str(d['last_name'])
-            tu.email = str(d['email'])
+            tu.email = str(d['username'])+'@mit.edu'
             tu.groups.add(Group.objects.get(name='tutee'))
             tu.save()
             ttu = TuteeUser()
@@ -122,6 +121,9 @@ def tutee_signup(request):
             ttu.phone = str(d['phone'])
             ttu.save()
             messages.success(request, 'You have successfully signed up!  Please login to your account')
+            # FIX UNCOMMENT FOR USE!!
+            #email = EmailMessage('[CSCC] Welcome, '+tu.first_name+'!', 'Hi '+tu.first_name+'! \n \nWelcome to CSCC.  You have successfully signed up as a Tutee!  Log in to open a new ticket and get matched with a personal Coach. \n \nusername: '+tu.username+'\npassword: '+str(d['password'])+'\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.', to=[tu.email])
+            #email.send()
             return HttpResponseRedirect("/accounts/login/")
         else:
             messages.error(request, "NOTE: You must acknowledge and agree with the terms below to continue.")
@@ -173,28 +175,15 @@ def logging_in(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                if user.is_staff:
+                if user.is_superuser:
                     return HttpResponseRedirect('/app_admin/home')
-                try: 
-                    CoachUser.objects.get(user__id=request.user.id)
-                    print 'logged in COACH'
+                elif user.groups.filter(name="tutee").exists():
+                    return HttpResponseRedirect('/tutee/home/')
+                elif user.groups.filter(name="coach").exists():
                     return HttpResponseRedirect('/coach/home/')
-                except:
-                    try: 
-                        TuteeUser.objects.get(user__id=request.user.id)
-                        print 'logged in TUTEE'
-                        return HttpResponseRedirect('/tutee/home/')
-                    except: 
-                        try:
-                            AdminUser.objects.get(user__id =request.user.id)
-                            print 'logged in ADMIN'
-                            return HttpResponseRedirect('/app_admin/home/')
-                        except:
-                            print 'PROBLEM--DID NOT FIND TYPE USER BUT EXISTS'
-                            return HttpResponseRedirect('uap_app/home/success')  ## FIX CHANGE THIS
-            else:
-                print 'not logged in, not active'
-                return HttpResponseRedirect('uap_app/home/failure')          ## FIX CHANGE THIS  
+                else:    
+                    messages.error(request, 'Login was unsuccessful. Try again, or sign up to start!')
+                    return render_to_response('login.html', context_instance=RequestContext(request))         
         else:
                 messages.error(request, 'Login information is incorrect')
                 return render_to_response('login.html', context_instance=RequestContext(request))
@@ -204,6 +193,9 @@ def logging_out(request):
     logout(request)
     messages.success(request, 'You have been successfully logged out; please come back soon!')
     return render_to_response('login.html', context_instance=RequestContext(request))
+
+def admin_logout(request):
+    return HttpResponseRedirect('/logout/')
 
 def basecase_contact(request):
     if request.method=="POST":
@@ -252,36 +244,21 @@ def new_project(request):
                 messages.success(request, 'You have successfully created a new Ticket')
                 return HttpResponseRedirect('/tutee/home/')
             else:
-                messages.error(request, 'NOTE: An unexpected error has occurred, ticket not created.')
                 return render_to_response('homebase.html', context_instance=RequestContext(request))
                 
         return render_to_response('new_project.html', {'form': form, 'user': request.user }, context_instance=RequestContext(request)) #CHANGE THIS 
     
     form = TicketForm()
     return render_to_response('new_project.html', {'form': form}, context_instance=RequestContext(request))
-    
-@login_required
-def home_success(request):
-    messages.success(request, 'You have successfully created a new Project')
-    print "********"+ request.user.username + " is logged in"
-    return render_to_response('homebase.html', context_instance=RequestContext(request))
- 
-@login_required    
-def home_success_tutee(request):
-    if not request.user.groups.filter(name="tutee").exists():
-        return HttpResponseRedirect('/no_access/')
-    messages.success(request, 'You have successfully created a new Project')
-    print "********"+ request.user.username + " is logged in"
-    return render_to_response('homebase.html', {'request':request}, context_instance=RequestContext(request))
 
 @login_required    
 def home_tutee(request):
     if not request.user.groups.filter(name="tutee").exists():
         return HttpResponseRedirect('/no_access/')
-    print "********"+ request.user.username + " is logged in"
     new = [1]       # hack: to check if tutee has open project
     tickets = []
     current = None
+    confirm =False
     if request.user.tuteeuser.open_project:
         #if request.user.tuteeuser.get(user = request.user) == None:
          #   print "NONE"
@@ -290,20 +267,22 @@ def home_tutee(request):
         for each in tickets:
             if each.status == 'NAS' or each.status=='CAS' or each.status=='CSB':
                 current = each
-    return render_to_response('homebase.html', {'request':request, 'current': current, 'new': new}, context_instance=RequestContext(request))
+                if current.status == 'CSB':
+                    confirm=True
+    return render_to_response('homebase.html', {'request':request, 'current': current, 'new': new, 'confirm':confirm}, context_instance=RequestContext(request))
     
 @login_required    
 def home_coach(request):
     if not request.user.groups.filter(name="coach").exists():
         return HttpResponseRedirect('/no_access/')
-    print "********"+ request.user.username + " is logged in"
-    return render_to_response('home_coach.html', {'request':request}, context_instance=RequestContext(request))
+        
+    open_tix = Ticket.objects.filter(coach=request.user.coachuser).filter(status='CAS')
+    return render_to_response('home_coach.html', {'request':request, 'open_tix':open_tix}, context_instance=RequestContext(request))
     
 @login_required    
 def home_admin(request):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
-    print "********"+ request.user.username + " is logged in"
     return render_to_response('home_admin.html', {'request':request}, context_instance=RequestContext(request))
 
 def home_failure(request):
@@ -346,7 +325,7 @@ def all_requests_tutee(request):
     if t.open_project:
         create.remove(1)
         for each in past_tix:
-            if each.status != 'TCF' and each.status != 'APR' and each.status != 'CNL':
+            if each.status != 'TCF' and each.status != 'APR' and each.status != 'CNL' and each.status !='NAP':
                 curr.append(each)
                 past_tix.remove(each)
                 break
@@ -371,7 +350,7 @@ def all_requests_coach(request):
         elif each.status == 'CSB':
             pending.append(each)
             prev_tix.remove(each)
-        # this leaves 'APR' and 'TAP' and possibly 'CNL' 
+        # this leaves 'APR', 'NAP', and 'TCF' and possibly 'CNL' 
     return render_to_response('all_projects_coach.html', {'u': u, 'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
 
 @login_required    
@@ -384,6 +363,19 @@ def project_tutee(request, pid = "nope"):
     details = []
     cancellable=False
     p = Ticket.objects.get(id = int(pid))
+    tix_details = None
+    try:
+        tix_details = TicketDetails.objects.get(ticket=p)
+    except:
+        None
+    vid = None
+    try:
+        vid = TicketVideoURL.objects.get(ticket=p)
+    except:
+        try:
+            vid = TicketVideo.objects.get(ticket=p)
+        except:
+            None
     # ensures that this ticket originated from the tutee requesting details
     if p.tutee.user != request.user:
         return HttpResponseRedirect('/no_access/')
@@ -397,14 +389,14 @@ def project_tutee(request, pid = "nope"):
         stat = "meeting details completed, waiting for your confirmation of meeting"
         details.append(1)
         confirm.append(1)
-    elif p.status =='TCF' or p.status =='APR':
+    elif p.status =='TCF' or p.status =='APR' or p.status=='NAP':
         stat ="meeting complete, request closed"
         details.append(1)
     elif p.status=='CNL':
         stat="request was cancelled"
     else:
         stat="UNKNOWN--contact administrator"
-    return render_to_response('tutee_project.html', {'p':p, 'cancellable':cancellable, 'stat': stat, 'confirm':confirm, 'details':details}, context_instance = RequestContext(request))
+    return render_to_response('tutee_project.html', {'p':p, 'cancellable':cancellable, 'stat': stat, 'confirm':confirm, 'details':details, 'vid':vid, 'tix_details':tix_details}, context_instance = RequestContext(request))
    
 @login_required
 def cancel_ticket(request, pid="no"):
@@ -433,7 +425,7 @@ def cancel_ticket_INCORRECT(request, pid="no"):
     if t.status == 'CSB':
         request.user.tuteeuser.open_project = False
         request.user.tuteeuser.save()
-        t.status = 'TAP'
+        t.status = 'TCF'
         t.save()
     else:
         messages.error(request, 'NOTE: Unexpected error!')
@@ -449,39 +441,70 @@ def project_coach(request, pid = "nope"):
         return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
         return HttpResponseRedirect('/no_access/')
-    if request.method =='POST':
-        form = TicketNoteForm(request.POST)
-        if form.is_valid():
-            note = TicketNote(coach = request.user.coachuser, ticket = Project.objects.get(id=int(pid)), details = request.POST['details'])
-            p = Ticket.objects.get(id=int(pid))
-            p.status = 7
-            p.save()
-            messages.success(request, 'Your Profile has been successfully updated')
-            return HttpResponseRedirect("/coach/home")
-    else:
-        form = TicketNoteForm()
+    form = TicketNoteForm()
     to_submit = []
     details = []
     withdraw = []
-    p = Project.objects.get(id = int(pid))
+    p = Ticket.objects.get(id = int(pid))
+    tix_details = None
+    try:
+        tix_details = TicketDetails.objects.get(ticket=p)
+    except:
+        None
+    vid = None
+    try:
+        vid = TicketVideoURL.objects.get(ticket=p)
+    except:
+        try:
+            vid = TicketVideo.objects.get(ticket=p)
+        except: 
+            messages.error(request, 'Unexpected Error: Cannot identify video submission. Please report this to the CSCC team using the REPORT page.')
     # ensures that this ticket is actually assigned to the coach requesting details
     if p.coach.user != request.user:
         return HttpResponseRedirect('/no_access/')
-    if p.status ==  2 or p.status == 3:    #for now, assume only 3
+    if p.status ==  'CAS':    #for now, assume only 3
         stat = "waiting to conduct meeting and submit details"
         withdraw.append(1)
         to_submit.append(1)
-    elif p.status ==4:
+    elif p.status == 'CSB' or p.status=='TCF':
         stat = "meeting details completed, waiting for tutee confirmation of meeting"
         details.append(1)
-    elif p.status == 5 or p.status ==6:
+    elif p.status == 'APR':
         stat ="meeting complete, request closed"
         details.append(1)
-    elif p.status==8:
+    elif p.status == 'NAP':
+        stat ="[Not Approved by Admin] meeting complete, request closed"
+        details.append(1)
+    elif p.status== 'CNL':
         stat="request cancelled"
     else:
         stat="UNKNOWN--contact administrator"
-    return render_to_response('coach_project.html', {'form': form, 'p':p, 'stat': stat, 'withdraw':withdraw, 'to_submit':to_submit, 'details':details}, context_instance = RequestContext(request))
+    return render_to_response('coach_project.html', {'form': form, 'p':p, 'stat': stat, 'withdraw':withdraw, 'to_submit':to_submit, 'details':details, 'tix_details':tix_details, 'vid':vid}, context_instance = RequestContext(request))
+  
+def coach_withdraw_ticket(request, pid="nope"):
+    if not request.user.groups.filter(name="coach").exists():
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() == False:
+        return HttpResponseRedirect('/no_access/')
+    if request.method=="POST":
+        form = TicketNoteForm(request.POST)
+        if form.is_valid():
+            note = TicketNote()
+            tix = Ticket.objects.get(id=pid)
+            note.ticket = tix
+            note.coach=request.user.coachuser
+            note.details=request.POST['details']
+            note.save()
+            tix.status = 'NAS'
+            tix.save()
+            tix.coach=None
+            tix.save()
+            messages.success(request, 'You have successfully submitted a withdrawal for your ticket assignment.')
+            return HttpResponseRedirect('/coach/home/')
+        else:
+            messages.error(request, 'You must write a statement explaining your reason for withdrawing from this assignment.')
+    return HttpResponseRedirect('/coach/ticket_'+pid)    
+
    
 @login_required
 def tutee_profile(request):
@@ -524,24 +547,54 @@ def submit_mtg_details(request, pid = "nope"):
     if not request.user.groups.filter(name="coach").exists():
         return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
-        return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS  
-    p=Project.objects.get(id=pid)
+        return HttpResponseRedirect('/no_access/') 
+    p=Ticket.objects.get(id=pid)
     if request.method == 'POST':
-        form = SubmitProjectForm(request.POST, request.FILES)
-        if form.is_valid():
-            print request.FILES['video']
-            p.video = request.FILES['video']
-            p.meeting_details = request.POST['meeting_details']
-            p.meeting_duration = request.POST['meeting_duration']
-            p.meeting_date = request.POST['meeting_date']
-            p.status = 4
-            p.save()
-            print p.meeting_details
-            messages.success(request, 'Meeting Details for Request #'+str(pid)+' has been successfully submitted')
-            return HttpResponseRedirect("/coach/home")
+        formA = TicketDetailsForm(request.POST)
+        formB = TicketVideoForm(request.POST, request.FILES)
+        if formA.is_valid():
+            if formB.is_valid():
+                if len(str(request.POST['vid_url']))==0:
+                    if len(str(request.FILES['vid_file']))==0:
+                        messages.error(request, "ERROR: You must chose ONE of the video options to complete the submission process")
+                        return HttpResponseRedirect('/coach/submit_meeting_details/ticket_'+pid)
+                    else: 
+                        vid_file = TicketVideo()
+                        vid_file.ticket = p
+                        vid_file.video = request.FILES['vid_file']
+                        vid_file.save()
+                        det = TicketDetails()
+                        det.ticket = p
+                        det.meeting_details = request.POST['meeting_details']
+                        det.meeting_duration = request.POST['meeting_duration']
+                        det.meeting_date = request.POST['meeting_date']
+                        det.save()
+                        p.status='CSB'
+                        p.save()
+                        messages.success(request, 'Meeting Details have been successfully submitted for ticket "'+p.title+'"')
+                        return HttpResponseRedirect('/coach/home/')
+                else:
+                    vid_url = TicketVideoURL()
+                    vid_url.ticket = p
+                    vid_url.video_url = request.POST['vid_url']
+                    vid_url.save()
+                    det = TicketDetails()
+                    det.ticket = p
+                    det.meeting_details = request.POST['meeting_details']
+                    det.meeting_duration = request.POST['meeting_duration']
+                    det.meeting_date = request.POST['meeting_date']
+                    det.save()
+                    p.status='CSB'
+                    p.save()
+                    messages.success(request, 'Meeting Details have been successfully submitted for ticket "'+p.title+'"')
+                    return HttpResponseRedirect('/coach/home/')
+                    print "found a url"
+            messages.error(request, "ERROR: please supply a valid URL for your video submission")
+        return HttpResponseRedirect("/coach/submit_meeting_details/ticket_"+pid)
     else:
-        form = SubmitProjectForm(initial = {'meeting_date':datetime.date.today})
-    return render_to_response('submit_mtg_details.html', {'form':form, 'pid':pid}, context_instance=RequestContext(request))
+        formA = TicketDetailsForm(initial = {'meeting_date':datetime.date.today})
+        formB = TicketVideoForm()
+    return render_to_response('submit_mtg_details.html', {'formA':formA, 'formB':formB, 'p':p}, context_instance=RequestContext(request))
     
 def handle_uploaded_file(file):
     if file:
@@ -591,12 +644,44 @@ def admin_view_requests(request):
     to_assign = list(Ticket.objects.filter(status='NAS'))
     assigned = list(Ticket.objects.filter(status='CAS'))
     submitted = list(Ticket.objects.filter(status='CSB'))
-    approval = list(Ticket.objects.filter(status='TAP'))
+    approval = list(Ticket.objects.filter(status='TCF'))
     return render_to_response('all_projects_admin.html', { 'to_assign': to_assign, 'assigned': assigned, 'submitted': submitted, 'approval': approval}, context_instance = RequestContext(request))
 
 ## NEED TO CORRECT THIS
+@login_required
 def confirm_ticket(request, pid="none"):
-    return 
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() == False:
+        return HttpResponseRedirect('/no_access')
+    tix = Ticket.objects.get(id=int(pid))
+    tix.status = 'TCF'
+    tix.save()
+    messages.success(request, "You have accepted the meeting details of this ticket as submitted by your Coach.")
+    return HttpResponseRedirect('/tutee/ticket_'+pid)
+
+@login_required
+def reject_ticket(request, pid="none"):
+    if not request.user.groups.filter(name="tutee").exists():
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() == False:
+        return HttpResponseRedirect('/no_access')
+    tix = Ticket.objects.get(id=int(pid))
+    tix.status='CAS'
+    tix.save()
+    detail = TicketDetails.objects.get(ticket=tix)
+    detail.delete()
+    try: 
+        vid = TicketVideo.objects.get(ticket=tix)
+        vid.delete()
+    except:
+        try:
+            vid = TicketVideoURL.objects.get(ticket=tix)
+            vid.delete()
+        except:
+            None
+    messages.success(request, "You have rejected the meeting details of this ticket.  Your Coach must re-submit the meeting details.")
+    return HttpResponseRedirect('/tutee/ticket_'+pid)
 
 @login_required    
 def admin_coach_requests(request):
@@ -615,7 +700,7 @@ def assign_coach(request, pid="nope"):
     if not request.user.groups.is_superuser:
         return HttpResponseRedirect('/no_access/')
     if pid.isdigit() == False:
-        return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
+        return HttpResponseRedirect('/no_access/')
     p = Project.objects.get(id=int(pid))
     if request.method == 'POST':
         cid = int(request.POST['coach'])
@@ -641,10 +726,26 @@ def admin_view_request(request, pid="nope"):
     if pid.isdigit()==False:
         return render_to_response('uap_app/home/failure', context_instance = RequestContext(request)) ##CHANGE THIS
     p = Ticket.objects.get(id=int(pid))
+    tix_details = None
+    try:
+        tix_details = TicketDetails.objects.get(ticket=p)
+    except:
+        None
+    vid = None
+    try:
+        vid = TicketVideoURL.objects.get(ticket=p)
+    except:
+        try:
+            vid = TicketVideo.objects.get(ticket=p)
+        except:
+            None
     assign = False
+    approve = False
     if p.status == 'NAS':
         assign=True
-    return render_to_response('admin_project.html', {'p':p, 'assign':assign}, context_instance = RequestContext(request))
+    if p.status =='TCF':
+        approve=True
+    return render_to_response('admin_project.html', {'p':p, 'approve':approve, 'assign':assign, 'vid':vid, 'tix_details':tix_details}, context_instance = RequestContext(request))
         
 @login_required
 def admin_all_tutee(request):
@@ -681,9 +782,9 @@ def add_coach(request, pid):
     c.save()
     r.status = 'AC'
     r.save()
-    ## generate email
-    email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "To login, your username is your athena: "+new.username+".  Your password is '"+password+"'.", to=[str(new.email)])
-    email_coach.send()
+    ## FIX UNCOMMENT WHEN IN PRODUCTION
+    #email_coach = EmailMessage('[CSCC] Congratulations, you are now a COACH for CSCC!', "Welcome to the CSCC community, "+new.first_name"!\nWe will contact you when an assignment has been made.  You can also check your assignments by logging in. \n\nusername: "+new.username+" \n\npassword: "+password+"\n\nThanks,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.", to=[new.email])
+    #email_coach.send()
     messages.success(request, str(new.username)+" has been assigned as coach and notified by email.")
     return HttpResponseRedirect('/app_admin/coach_requests/')
 
@@ -715,6 +816,30 @@ def admin_profile(request):
     return render_to_response('admin_profile.html', {'form':form, 'u':u}, context_instance = RequestContext(request))
 
 @login_required
+def admin_approve_ticket(request, pid="none"):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() ==False:
+        return HttpResponseRedirect('/no_access/')
+    tix = Ticket.objects.get(id=int(pid))
+    tix.status='APR'
+    tix.save()
+    messages.success(request, "You have APPROVED this ticket.")
+    return HttpResponseRedirect('/app_admin/ticket_'+pid)
+
+@login_required
+def admin_reject_ticket(request, pid="none"):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    if pid.isdigit() ==False:
+        return HttpResponseRedirect('/no_access/')
+    tix = Ticket.objects.get(id=int(pid))
+    tix.status='NAP'
+    tix.save()
+    messages.success(request, "You have REJECTED this ticket.")
+    return HttpResponseRedirect('/app_admin/ticket_'+pid)
+
+@login_required
 def admin_view_coach(request, pid="none"):
     if not request.user.is_superuser:
         return HttpResponseRedirect('/no_access/')
@@ -733,7 +858,7 @@ def admin_view_coach(request, pid="none"):
         elif each.status == 'CSB':
             pending.append(each)
             prev_tix.remove(each)
-        # this leaves 'APR' and 'TAP' and possibly 'CNL' 
+        # this leaves 'APR', 'NAP', and 'TCF' and possibly 'CNL' 
     return render_to_response('admin_view_coach.html', {'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
    
 ##NOTE: need to remove my email from this!! FIX  
@@ -765,4 +890,14 @@ def assign_ticket(request, pid="none"):
     
     return render_to_response('assign_coach.html', {'p':Ticket.objects.get(id=int(pid)), 'coaches':coaches}, context_instance = RequestContext(request))
    
-#r 
+@login_required
+def assign_ticket(request):
+    if not request.user.is_superuser:
+        return HttpResponseRedirect('/no_access/')
+    if request.method=="POST":
+        form = NewAdminForm(request.POST)
+        if form.is_valid():
+            new = User()
+    else:
+        form = NewAdminForm()
+    return 

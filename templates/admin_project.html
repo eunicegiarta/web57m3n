@@ -8,10 +8,24 @@ h3{
 {% block tickets %}class ="selected"{%endblock%}
 
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}<br>
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if approve %}<br>
+<ul class="messages">
+    <p class="success">This ticket is ready for your review.  Please approve or reject by selecting the appropriate button</p>
+</ul>
+{% endif %}
 <div class="container">
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
-	<h1><b>ticket details </b> {% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit">ASSIGN COACH </button></form>{% endif %}</h1> <hr>
+	<h1><b>ticket details </b> {% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit">ASSIGN COACH </button></form>{% endif %}
+		{% if approve %}<br><a href=/app_admin/ticket_{{p.id}}/approve/><button class="submit">APPROVE TICKET</button></a><br>
+		<a href=/app_admin/ticket_{{p.id}}/reject/><button class="submit">REJECT TICKET</button></a>{% endif %}</h1> <hr>
 	<div class="span-14 prepend-3 last">
 	<h3 align=""><b>conference talk title</b></h3>
 	<h2 align="">{{p.title}}</h2><hr>
@@ -35,13 +49,13 @@ h3{
 			{% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit ">ASSIGN COACH </button>{% endif %}
 		</div><hr>
 	<h3 align=""><b>meeting date</b></h3>
-	<h2 align="">{{p.meeting_date}}</h2><hr>
+	<h2 align="">{{tix_details.meeting_date}}</h2><hr>
 	<h3 align=""><b>meeting duration (in minutes)</b></h3>
-	<h2 align="">{{p.meeting_duration}}</h2><hr>
+	<h2 align="">{{tix_details.meeting_duration}}</h2><hr>
 	<h3 align=""><b>meeting details</b></h3>
-	<h2 align="">{{p.meeting_details}}</h2><hr>
+	<h2 align="">{{tix_details.meeting_details}}</h2><hr>
 	<h3 align=""><b>video</b></h3>
-	<h2 align="">{{p.video}}</h2><hr>
+	<h3 style="color:black" align="">{{vid.video}} {{vid.video_url}}</h3><hr>
 	</div>
 </div>
 </div>

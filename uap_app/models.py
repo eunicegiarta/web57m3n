@@ -4,13 +4,8 @@ from django.contrib.auth.models import User, Permission
 from django.forms.extras.widgets import *
 from datetime import *
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Group    
+from django.contrib.auth.models import Group
 
-
-#proj_ct = ContentType.objects.get(app_label='uap_app', model='project')
-#tutee_permission = Permission(name="Tutee Permission", codename="tutee_permission", content_type = proj_ct)
-#coach_permission = Permission(name="Coach Permission", codename="coach_permission", content_type = proj_ct)
-#admin_permission = Permission(name="Admin Permission", codename="admin_permission", content_type = proj_ct)        
   
 ## CHOICES 
 SIX1 = '6-1'
@@ -43,6 +38,7 @@ STATUS_CHOICES = (
     ('CSB', 'Coach Submit Ticket'),
     ('TCF', 'Tutee Confirms Ticket'),
     ('APR', 'Admin Approval of Ticket'),
+    ('NAP', 'Admin Denies Approval'),
     ('CNL', 'Cancelled Ticket')
 )
 
@@ -98,34 +94,36 @@ Let the following integers represent the status of the Project:
 
 """
 
+
 class Ticket(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
-    ee_related = models.BooleanField()
-    cs_related = models.BooleanField()
     area_of_interest = models.CharField(max_length=30)
     date_of_interest = models.DateField(null=True)   #ie. presentation date, date of defense, etc.
     date_created = models.DateField(auto_now_add=True) #date ticket created by tutee
     status = models.CharField(max_length = 3, choices = STATUS_CHOICES) 
     tutee = models.ForeignKey(TuteeUser)
     coach = models.ForeignKey(CoachUser, null=True)
-    video = models.FileField(upload_to='video/', null=True)
+    def __string__(self):
+        print 'created by ' + self.tutee.user.username
+    
+class TicketDetails(models.Model):
+    # video = models.FileField(upload_to='video/', null=True)   --- NOW WITH TicketVideo
     meeting_details = models.TextField(blank=True)      
     meeting_duration = models.IntegerField(default = 0) # length of meeting time in minutes
     meeting_date = models.DateField(null=True)      # date that the coach/tutee meeting occurred
-    
-    def __string__(self):
-        print 'created by ' + self.tutee.user.username
-        
-    class Meta:
-        permissions = (
-            ("tutee_permission", "is a tutee"), 
-            ("coach_permission", "is a coach"),
-            ("admin_permission", "is an admin"),
-        )
-        
-class TicketNote(models.Model):
     ticket = models.OneToOneField(Ticket)
+        
+class TicketVideo(models.Model):
+    video = models.FileField(upload_to='video/')
+    ticket = models.OneToOneField(Ticket)
+
+class TicketVideoURL(models.Model):
+    video_url = models.CharField(max_length=100)
+    ticket = models.OneToOneField(Ticket)
+
+class TicketNote(models.Model):
+    ticket = models.ForeignKey(Ticket)
     details = models.TextField(blank=True)
     coach = models.ForeignKey(CoachUser)
         
@@ -135,31 +133,24 @@ class TicketForm(forms.Form):
     date_of_interest = forms.DateField(widget=forms.TextInput({ "placeholder": "YYYY-MM-DD" }), label="Approximate Conference Presentation Date")
     area_of_interest = forms.CharField(widget=forms.TextInput({ "placeholder": "ie. Artificial Intelligence" }))
     
-class SubmitTicketForm(forms.Form):
-    video = forms.FileField(required = False) ##FOR NOW MUST CHANGE!!
+class TicketDetailsForm(forms.Form):
+    #video = forms.FileField(required = False) ##FOR NOW MUST CHANGE!!
     meeting_details = forms.CharField(widget=forms.Textarea)
-    meeting_duration = forms.IntegerField(label = "Meeting duration in minutes", widget=forms.TextInput({ "placeholder": "ex: 1 Hour = '60'" }))
+    meeting_duration = forms.IntegerField(label = "Duration of Meeting (mins)", widget=forms.TextInput({ "placeholder": "ex: 1 Hour = '60'" }))
     meeting_date = forms.DateField()    
 
-''' NOTE: replaced by CoachRequest
+class TicketVideoForm(forms.Form):
+    vid_file = forms.FileField(required = False, label="Video File")
+    vid_url = forms.URLField(required = False, label="Video URL", widget=forms.TextInput({ "placeholder": "www.youtube.com/my_video1173" }))
 
-class CoachUserForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField()
-    first_name = forms.CharField()
-    last_name = forms.CharField()
-    email = forms.EmailField()
-    phone = forms.CharField(max_length=11)
-    ee_help = forms.BooleanField(required = False,label = "Can support EE-focus")
-    cs_help = forms.BooleanField(required = False,label = "Can support CS-focus")
-'''
-    
+class TicketNoteForm(forms.Form):
+    details = forms.CharField(widget=forms.Textarea, label='Reason for Withdrawl')
+   
 class TuteeUserForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput({ "placeholder": "jsmith2013" }), label="Userame (Athena)")
     password = forms.CharField(widget=forms.TextInput({ "placeholder": "password123" }))
     first_name = forms.CharField(widget=forms.TextInput({ "placeholder": "Jane" }))
     last_name = forms.CharField(widget=forms.TextInput({ "placeholder": "Smith" }))
-    email = forms.EmailField(widget=forms.TextInput({ "placeholder": "jsmith@mit.edu" }))
     phone = forms.CharField(max_length=11, widget=forms.TextInput({ "placeholder": "18005556789" }))
     research_advisor_email = forms.EmailField(widget=forms.TextInput({ "placeholder": "johndoe@mit.edu" }))
     
@@ -204,7 +195,6 @@ class CoachReqForm(forms.Form):
     athena_username = forms.CharField(widget=forms.TextInput({ "placeholder": "jsmith2013" })) 
     first_name = forms.CharField(widget=forms.TextInput({ "placeholder": "Jane" }))
     last_name = forms.CharField(widget=forms.TextInput({ "placeholder": "Smith" }))  
-    email = forms.EmailField(label="Preferred Email", widget=forms.TextInput({ "placeholder": "jsmith2013@mit.edu" })) 
     phone = forms.CharField(widget=forms.TextInput({ "placeholder": "15005552358" }))
     course = forms.ChoiceField(choices = COURSE_CHOICES)
     uat_semester = forms.ChoiceField(widget=forms.Select, choices = SEMESTER_CHOICES, label="Semester enrolled in 6.8UAT")
@@ -217,3 +207,8 @@ class ChangePasswordForm(forms.Form):
 
 class ValidateAgreementForm(forms.Form):
     agree = forms.BooleanField(required=True, label="I have read and agree with the terms and conditions outlined above")
+    
+class NewAdminForm(forms.Form)
+    username = forms.CharField(label="Athena Username")
+    first_name = forms.CharField()
+    last_name = forms.CharField()

@@ -71,7 +71,7 @@ button.submit:active {
 {% block content %}
 {% if messages%}
 {%for message in messages%}
-    <li style="background:#aef18d; color:green" class="success" id="success_id success" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    <p style="background:#aef18d; color:green" class="success" id="success_id success" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
 {%endfor%}
 {%endif%}
 

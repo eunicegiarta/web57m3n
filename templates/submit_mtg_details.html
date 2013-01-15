@@ -1,14 +1,33 @@
 {% extends "base_coach.html" %}
-
+{% block tickets %}class="selected"{%endblock%}
+{% block scripts%}
+li {color: red}
+{%endblock%}
 {% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="container">
+	<div class="span-3"><p></p></div>
+	<div class="example1 pdding prepend-top span-17 last append-bottom">
 
-<h1>Submit Meeting Details for Request #{{pid}}</h1>
+		<h1><b>submit meeting details</b></h1>
+		<div class="span-14 prepend-1 last">
+			<h3 style="color:gray" align=""><b>{{p.title}}</b></h3>
+		</div><hr>
+		<form action="" method="POST" class="login submit" enctype="multipart/form-data">
+			{% csrf_token %}
+			{{formA.as_p}}
+			<h4><b>Video is required</b>--select only ONE of the following options, upload a compressed video file or supply a URL to video.  </h4>
+			{{formB.as_p}}
+			<button class="submit center" type="submit">SUBMIT</button>
+		</form>
 
-<form action="" method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-{{form.as_p}}
-<input type="submit" value="Submit" />
-</form>
-
+	</div>
+</div>
 
 {% endblock%}

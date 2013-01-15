@@ -1,40 +1,87 @@
 {% extends "base_coach.html" %}
+{% block scripts %}
+h3 {
+	color: gray
+}
+.login label {
+    width:150px;
+    margin-top: 3px;
+    display:inline-block;
+    float:left;
+    padding:3px;
+}
+.login input {
+    height:20px;
+    padding:5px 8px;
+	width: 165px;
+}
 
+.login input, .login textarea {
+    border:1px solid #aaa;
+    border-radius:2px;
+}
+.login input:focus, .contact_form textarea:focus {
+    background: #fff;
+    border:1px solid #555;
+    box-shadow: 0 0 3px #aaa;
+}
+{% endblock %}
+{% block tickets %}class="selected"{% endblock %}
 {% block content %}
-<h2>Tutee</h2>
-<p>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</p>
-<h2>{{p.title}}</h2>
-<h4>Description</h4>
-<p>{{p.description}}</p>
-<h4>Presentation Date</h4>
-<p>{{p.date_of_interest}}</p>
-<h4>Status</h4>
-<p>{{stat}}</p>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+    {% endfor %}
+</ul>
+{% endif %}
 
+	{% if to_submit %}<p class="success">If you have met with your Tutee and fulfilled this assignment, please close the ticket by clicking the <b>SUBMIT MEETING DETAILS</b> button.</p> {%endif%}
+<div class="container">
+	<div class="span-3"><p></p></div>
+<div class="example1 pdding prepend-top span-17 last append-bottom">
+	<h1><b>ticket details </b> {% if to_submit %}<br><a href="/coach/submit_meeting_details/ticket_{{p.id}}"><button class="submit" onclick="return confirmation()">SUBMIT MEETING DETAILS</button></a>{% endif %}</h1> <hr>
+	<div class="span-14 prepend-3 last">
+	<h3 align=""><b>conference talk title</b></h3>
+	<h2 align="">{{p.title}}</h2><hr>
+	<h3 align=""><b>paper abstract</b></h3>
+	<h3 style="color:black" align="">{{p.description}}</h3><hr>
+	<h3 align=""><b>approximate conference presentation date</b></h3>
+	<h2 align="">{{p.date_of_interest}}</h2><hr>
+	<h3 align=""><b>area of interest</b></h3>
+	<h2 align="">{{p.area_of_interest}}</h2><hr>
 
-{% for j in details %}
-<h3>Meeting Details</h3>
-<h4>Date </h4>
-<p>{{p.meeting_date}}</p>
-<h4>Summary</h4>
-<p>{{p.meeting_details}}</p>
-<h4>Duration</h4>
-<p>{{p.meeting_duration}} minutes</p>
-<h4>Video</h4>
-<p>{{p.video}}</p>
-{% endfor %}
-
-{% for i in to_submit %}
-<a href="/coach/submit_meeting_details/request_{{p.id}}"> SUBMIT MEETING DETAILS </a>
-{% endfor %}
-
-{% for w in withdraw %}
-<p>If for some reason you cannot fulfill your duties as a Coach for this request, you may withdraw from this assignment:</p>
-<form action="" method="POST">
-	{% csrf_token %}
-	{{ form.as_p}}
-<input type="submit" value="Withdraw Assignment as Coach" />
-</form>
-{% endfor %}
+	<h3 align=""><b>status</b></h3>
+	<h2 align="">{{p.get_status_display}}</h2><hr>
+	</div>
+	<h2><b>meeting details</b></h2><hr>
+	<div class="span-14 prepend-3 last">
+		<div class "span-2 append-1">
+			<h3 align=""><b>coach</b></h3>
+			<h2 align="">{{p.coach.user.first_name}} {{p.coach.user.last_name}}</h2>
+		</div>
+		<div class="span-2 last"> 
+			{% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit ">ASSIGN COACH </button>{% endif %}
+		</div><hr>
+	<h3 align=""><b>meeting date</b></h3>
+	<h2 align="">{{tix_details.meeting_date}}</h2><hr>
+	<h3 align=""><b>meeting duration (in minutes)</b></h3>
+	<h2 align="">{{tix_details.meeting_duration}}</h2><hr>
+	<h3 align=""><b>meeting details</b></h3>
+	<h2 align="">{{tix_details.meeting_details}}</h2><hr>
+	<h3 align=""><b>video</b></h3>
+	<h3 style="color:black" align="">{{vid.video}} {{vid.video_url}}</h3><hr>
+	</div>
+	<hr><hr>
+	{% if withdraw %}
+	<h4>If for some reason you cannot fulfill your duties as a Coach for this request, you may withdraw from this assignment:</h4>
+	<form action="/coach/ticket_{{p.id}}/withdraw/" method="POST" class="login submit">
+		{% csrf_token %}
+		{{ form.as_p}}
+	<button style="width:300px" class="submit center">WITHDRAW FROM COACHING ASSIGNMENT</button>
+	</form>
+	{% endif %}
+</div>
+</div>
 
 {% endblock %}
