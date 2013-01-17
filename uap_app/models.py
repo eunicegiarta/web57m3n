@@ -129,7 +129,7 @@ class TicketNote(models.Model):
         
 class TicketForm(forms.Form):
     title = forms.CharField(widget=forms.TextInput({ "placeholder": "Project Talk on K-lines" }), label = "Conference Talk Title")
-    details = forms.CharField(widget=forms.Textarea, label="Paper Abstract (optional)")
+    details = forms.CharField(widget=forms.Textarea, label="Paper Abstract (optional)", required = False)
     date_of_interest = forms.DateField(widget=forms.TextInput({ "placeholder": "YYYY-MM-DD" }), label="Approximate Conference Presentation Date")
     area_of_interest = forms.CharField(widget=forms.TextInput({ "placeholder": "ie. Artificial Intelligence" }))
     
@@ -168,19 +168,6 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField()
 
-### CURRENTLY UNUSED    
-class TuteeUserProfileForm(forms.Form):
-    email = forms.EmailField()
-    phone = forms.CharField(max_length=11)
-    research_advisor_email = forms.EmailField()
-
-### CURRENTLY UNUSED
-class CoachUserProfileForm(forms.Form):
-    email = forms.EmailField()
-    phone = forms.CharField(max_length=11)
-    ee_help = forms.BooleanField(required = False,label = "Can support EE-focus")
-    cs_help = forms.BooleanField(required = False,label = "Can support CS-focus")
-
 class EmailAdminForm(forms.Form):
     subject = forms.CharField(label="Subject")
     message = forms.CharField(widget = forms.Textarea, label="Problem Description")
@@ -197,7 +184,7 @@ class CoachReqForm(forms.Form):
     last_name = forms.CharField(widget=forms.TextInput({ "placeholder": "Smith" }))  
     phone = forms.CharField(widget=forms.TextInput({ "placeholder": "15005552358" }))
     course = forms.ChoiceField(choices = COURSE_CHOICES)
-    uat_semester = forms.ChoiceField(widget=forms.Select, choices = SEMESTER_CHOICES, label="Semester enrolled in 6.8UAT")
+    uat_semester = forms.ChoiceField(widget=forms.Select, choices = SEMESTER_CHOICES, label="Semester enrolled in 6.UAT")
     uat_year = forms.IntegerField(label="Year enrolled in 6.UAT", widget=forms.TextInput({ "placeholder": "2012" }))
 
 class ChangePasswordForm(forms.Form):

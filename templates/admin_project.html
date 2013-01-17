@@ -27,6 +27,8 @@ h3{
 		{% if approve %}<br><a href=/app_admin/ticket_{{p.id}}/approve/><button class="submit">APPROVE TICKET</button></a><br>
 		<a href=/app_admin/ticket_{{p.id}}/reject/><button class="submit">REJECT TICKET</button></a>{% endif %}</h1> <hr>
 	<div class="span-14 prepend-3 last">
+	<h3 align=""><b>tutee</b></h3>
+	<h2 align="">{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</h2><hr>
 	<h3 align=""><b>conference talk title</b></h3>
 	<h2 align="">{{p.title}}</h2><hr>
 	<h3 align=""><b>paper abstract</b></h3>

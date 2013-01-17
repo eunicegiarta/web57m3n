@@ -19,7 +19,7 @@
 		<h3><b>You have {{num_no}} outstanding items!</b></h3><hr>
 		{%if req%}
 		<h3><b>new coach requests</b></h3>
-		{% for each in req %}
+		{% for r in req %}
 		<div style="height:75px; background-color:#CACACA" class ="span-14 pdding example1 center last append-bottom">
 			<div class="span-9">
 				<h3 align="">{{r.course}} <b>{{ r.first_name }} {{r.last_name}}</b> ({{r.athena}})</h3>
@@ -46,7 +46,7 @@
 			<h4><b>{{ each.title }}</b>--({{each.date_of_interest}})<br><b>tutee:</b> {{each.tutee.user.first_name}} {{each.tutee.user.last_name}} ({{each.tutee.user.username}})</h4>
 		</div>
 		<div class="prepend-1 span-5 last">
-			<form action="/admin/ticket_{{each.id}}">
+			<form action="/app_admin/ticket_{{each.id}}">
 				<button id="submit" style="width:130px" class="submit center" type="submit" value="submit">VIEW DETAILS</button>
 			</form>
 		</div>
