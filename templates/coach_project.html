@@ -41,37 +41,72 @@ h3 {
 	<div class="span-3"><p></p></div>
 <div class="example1 pdding prepend-top span-17 last append-bottom">
 	<h1><b>ticket details </b> {% if to_submit %}<br><a href="/coach/submit_meeting_details/ticket_{{p.id}}"><button class="submit" onclick="return confirmation()">SUBMIT MEETING DETAILS</button></a>{% endif %}</h1> <hr>
-	<div class="span-14 prepend-3 last">
+	
+	<div class="span-4 append-1">
+	<h3 align=""><b>tutee</b></h3>
+	</div>	
+	<div class="span-12 last">
+	<h2 align="">{{p.tutee.user.first_name}} {{p.tutee.user.last_name}} ({{p.tutee.user.username}})</h2>
+	</div><hr>
+	<div class="span-4 append-1">
 	<h3 align=""><b>conference talk title</b></h3>
-	<h2 align="">{{p.title}}</h2><hr>
+	</div>	
+	<div class="span-12 last">
+	<h2 align="">{{p.title}}</h2>
+	</div><hr>
+	<div class="span-4 append-1">
 	<h3 align=""><b>paper abstract</b></h3>
-	<h3 style="color:black" align="">{{p.description}}</h3><hr>
+	</div>
+	<div class="span-12 last">
+	<h3 style="color:black" align="">{{p.description}}</h3>
+	</div><hr>
+	<div class="span-4 append-1">
 	<h3 align=""><b>approximate conference presentation date</b></h3>
+	</div>
 	<h2 align="">{{p.date_of_interest}}</h2><hr>
+	<div class="span-4 append-1">
 	<h3 align=""><b>area of interest</b></h3>
-	<h2 align="">{{p.area_of_interest}}</h2><hr>
-
+	</div>
+	<div class="span-12 last">
+	<h2 align="">{{p.area_of_interest}}</h2>
+	</div><hr>
+	<div class="span-4 append-1">
 	<h3 align=""><b>status</b></h3>
-	<h2 align="">{{p.get_status_display}}</h2><hr>
 	</div>
-	<h2><b>meeting details</b></h2><hr>
-	<div class="span-14 prepend-3 last">
-		<div class "span-2 append-1">
-			<h3 align=""><b>coach</b></h3>
-			<h2 align="">{{p.coach.user.first_name}} {{p.coach.user.last_name}}</h2>
-		</div>
-		<div class="span-2 last"> 
-			{% if assign %}<form action="ticket_{{p.id}}/assign/"><button class="submit ">ASSIGN COACH </button>{% endif %}
-		</div><hr>
-	<h3 align=""><b>meeting date</b></h3>
-	<h2 align="">{{tix_details.meeting_date}}</h2><hr>
-	<h3 align=""><b>meeting duration (in minutes)</b></h3>
-	<h2 align="">{{tix_details.meeting_duration}}</h2><hr>
-	<h3 align=""><b>meeting details</b></h3>
-	<h2 align="">{{tix_details.meeting_details}}</h2><hr>
-	<h3 align=""><b>video</b></h3>
-	<h3 style="color:black" align=""><a href="{{vid.video}} {{vid.video_url}}">{{vid.video}} {{vid.video_url}}</a></h3><hr>
-	</div>
+	<div class="span-12 last">
+	<h2 align="">{{p.get_status_display}}</h2>
+	</div><hr>
+	
+	<!-- MEETING DETAILS (AFTER COACH SUBMITS) SECTION -->
+	<h2><b>meeting details</b>
+		{% if confirm %}<br><a href=/tutee/ticket_{{p.id}}/confirm/><button class="submit">CONFIRM MEETING</button></a><br>
+		<a href=/tutee/ticket_{{p.id}}/reject/><button class="submit">REJECT MEETING</button></a>{% endif %}</h2>
+			<p style="color:gray">Note: This section will remain blank until you have completed your meeting with your assigned tutee and successfully submit meeting details for this ticket.</p><hr>
+	
+			<div class="span-4 append-1">
+			<h3 align=""><b>meeting date</b></h3>
+			</div>
+			<div class="span-12 last">
+			<h2 align="">{{tix_details.meeting_date}}</h2>
+			</div><hr>
+			<div class="span-4 append-1">
+			<h3 align=""><b>meeting duration (in minutes)</b></h3>
+			</div>
+			<div class="span-12 last">
+			<h2 align="">{{tix_details.meeting_duration}}</h2>
+			</div><hr>
+			<div class="span-4 append-1">
+			<h3 align=""><b>meeting details</b></h3>
+			</div>
+			<div class="span-12 last">
+			<h2 align="">{{tix_details.meeting_details}}</h2>
+			</div><hr>
+			<div class="span-4 append-1">
+			<h3 align=""><b>video</b></h3>
+			</div>
+			<div class="span-12 last">
+			<h3 style="color:black" align=""><a href="{{vid.video}} {{vid.video_url}}">{{vid.video}} {{vid.video_url}}</a></h3>
+			</div><hr>
 	<hr><hr>
 	{% if withdraw %}
 	<h4>If for some reason you cannot fulfill your duties as a Coach for this request, you may withdraw from this assignment:</h4>
