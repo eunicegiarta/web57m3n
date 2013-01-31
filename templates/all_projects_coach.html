@@ -34,7 +34,7 @@
 	   {% for p in pending %}
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
 			<div class="span-9 ">
-			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
+			<h4><b>{{ p.title }}</b><br>meeting date: <b>{{p.ticketdetails.meeting_date}}<b><br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
 			<form action="/coach/ticket_{{p.id}}">
@@ -44,7 +44,7 @@
 		</div>
 		{% endfor %}
 	{% else %}
-	<h4 align="center">You have no submitted/pending tickets</h4>
+	<h3 align="center">You have no submitted/pending tickets</h3>
 	{% endif %}
 	<hr>
 	<h2 align="center"><b>past tickets</b></h2>
@@ -53,7 +53,7 @@
 	
 		<div style="height: 35px; background-color:#CACACA" class ="span-15 pdding example1 append-bottom center last">
 			<div class="span-9 ">
-			<h4><b>{{ p.title }}</b>, meeting date: {{p.meeting_date}}<br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
+			<h4><b>{{ p.title }}</b><br>meeting date: <b>{{p.ticketdetails.meeting_date}}<b><br>tutee: <b>{{p.tutee.user.first_name}} {{p.tutee.user.last_name}}</b></h4>
 		</div>
 		<div class="prepend-1 span-5 last">
 			<form action="/coach/ticket_{{p.id}}">

@@ -26,10 +26,15 @@
 	<h2><b> Available Coaches </b></h2><p>Course First Last (# tickets assigned)</p>
 	<form action="" method="POST">
 		{% csrf_token %}
-	{% for c in coaches %}
-	<input type="radio" name="coach" value='{{c.id}}'><b>{{c.course}} {{c.user.first_name}} {{c.user.last_name}} ({{c.projects_assigned}})</b><hr>
-	{% endfor %}
-	<button class="submit">ASSIGN</button>
+		<select style="width:250px; height: 30px" name="coach">
+		{% for entry in coaches %}
+		    <option value="{{ entry.id }}">{{entry.course}} {{ entry.user.first_name }} {{entry.user.last_name}} ({{entry.projects_assigned}})</option>
+		{% endfor %}
+		</select><br><br>
+		
+		
+
+	<button class="center submit">ASSIGN</button>
 	</form>
 </div>
 

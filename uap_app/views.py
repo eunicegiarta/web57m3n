@@ -359,6 +359,8 @@ def all_requests_coach(request):
             prev_tix.remove(each)
         elif each.status =='CNL':
             prev_tix.remove(each)
+    
+    
         # this leaves 'APR' and 'NAP' 
     return render_to_response('all_projects_coach.html', {'u': u, 'c':c, 'past':prev_tix, 'open':open_tix, 'pending': pending}, context_instance=RequestContext(request)) 
 
@@ -420,6 +422,9 @@ def cancel_ticket(request, pid="no"):
     if t.status == 'NAS' or t.status == 'CAS':
         request.user.tuteeuser.open_project = False
         request.user.tuteeuser.save()
+        if t.status =='CAS':
+            t.coach.projects_assigned -= 0
+            t.coach.save()
     t.status = 'CNL'
     t.save()
     messages.success(request, 'Ticket has been successfully cancelled')
@@ -506,6 +511,8 @@ def coach_withdraw_ticket(request, pid="nope"):
             note.save()
             tix.status = 'NAS'
             tix.save()
+            tix.coach.projects_assigned -= 1
+            tix.coach.save()
             tix.coach=None
             tix.save()
             messages.success(request, 'You have successfully submitted a withdrawal for your ticket assignment.')
@@ -667,6 +674,8 @@ def confirm_ticket(request, pid="none"):
     tix = Ticket.objects.get(id=int(pid))
     tix.status = 'TCF'
     tix.save()
+    tix.coach.projects_assigned -= 1
+    tix.coach.save()
     tuteeuser = TuteeUser.objects.get(user = request.user)
     tuteeuser.open_project = False
     tuteeuser.save()
@@ -715,6 +724,8 @@ def assign_coach(request, pid="nope"):
     if pid.isdigit() == False:
         return HttpResponseRedirect('/no_access/')
     p = Project.objects.get(id=int(pid))
+    if p.status != 'NAS':
+        return HttpResponseRedirect('/no_access/')
     if request.method == 'POST':
         cid = int(request.POST['coach'])
         c = User.objects.get(id=cid).coachuser
