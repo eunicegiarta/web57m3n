@@ -59,6 +59,14 @@ def basecase_coach_application(request):
             n.course =request.POST['course']
             n.save()
             messages.success(request, 'Application successfully submitted.  Thank you for your interest in becoming a coach with CSCC.  We will be in contact with you shortly!')
+            # email prospective coach
+            email = EmailMessage('[CSCC] Thank you for applying to be a Coach!', 'Hi '+n.first_name+'! \n \nThank you for your interest in CSCC!  Your Coach application has been received and will be reviewed.  A decision should be made shortly. \n\nAll the best,\nThe CSCC Team\n\n\nDo not respond to this email as it is unmoderated.  Use the REPORT page to contact us.', to=[n.email])
+            email.send()
+            # email notification to ADMIN users
+            admin_emails = get_admin_emails()
+            email = EmailMessage('[CSCC Action Required] New Coach Request', 'A new Coach Request has been submitted and needs review.\n \nCSCC Auto-Notifications', to=admin_emails)
+            email.send()
+            
             return HttpResponseRedirect('/')
         else:
             messages.error(request, 'NOTE: Your coach application was not submitted properly.  Please try again!')
@@ -67,7 +75,13 @@ def basecase_coach_application(request):
         return render_to_response('coach_application.html', {'form': form, 'user': request.user }, context_instance=RequestContext(request)) #CHANGE THIS 
     form = CoachReqForm()
     return render_to_response('coach_application.html', {'form': form}, context_instance=RequestContext(request))
-    
+
+# helper function that returns a list of ADMIN user email address strings
+def get_admin_emails():
+    admin_users = User.objects.filter(is_superuser = True)
+    emails = [str(each.email) for each in list(admin_users)]
+    return emails
+
 def basecase_signup(request):
     return render_to_response('signup.html', context_instance=RequestContext(request))
     
@@ -215,7 +229,8 @@ def basecase_contact(request):
     if request.method=="POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-            email = EmailMessage('[CSCC CONTACT FORM] '+request.POST['subject'], 'SENT FROM: '+str(request.POST['name'])+', EMAIL: '+ str(request.POST['email'])+'\n\n'+request.POST['message'], to=["cscc-admin@mit.edu"])
+            admin_email = get_admin_emails()
+            email = EmailMessage('[CSCC CONTACT FORM] '+request.POST['subject'], 'SENT FROM: '+str(request.POST['name'])+', EMAIL: '+ str(request.POST['email'])+'\n\n'+request.POST['message'], to=admin_email)
             email.send()
             messages.success(request, 'Your message to CSCC has been sent')
             return HttpResponseRedirect("/")
@@ -246,6 +261,10 @@ def new_project(request):
                 curruser.open_project = True
                 curruser.save()
                 messages.success(request, 'You have successfully created a new Ticket')
+                # email notification to ADMIN users
+                admin_emails = get_admin_emails()
+                email = EmailMessage('[CSCC Action Required] New Ticket', 'A new Ticket has been created and needs a Coaching assignment.\n \nCSCC Auto-Notifications', to=admin_emails)
+                email.send()
                 return HttpResponseRedirect('/tutee/home/')
             else:
                 return render_to_response('homebase.html', context_instance=RequestContext(request))
@@ -516,6 +535,10 @@ def coach_withdraw_ticket(request, pid="nope"):
             tix.coach=None
             tix.save()
             messages.success(request, 'You have successfully submitted a withdrawal for your ticket assignment.')
+            # email notification to ADMIN users
+            admin_emails = get_admin_emails()
+            email = EmailMessage('[CSCC Action Required] Ticket Needs Coaching Assignment', 'A Ticket needs a new Coaching assignment.\n \nCSCC Auto-Notifications', to=admin_emails)
+            email.send()
             return HttpResponseRedirect('/coach/home/')
         else:
             messages.error(request, 'You must write a statement explaining your reason for withdrawing from this assignment.')
@@ -589,6 +612,10 @@ def submit_mtg_details(request, pid = "nope"):
                         p.status='CSB'
                         p.save()
                         messages.success(request, 'Meeting Details have been successfully submitted for ticket "'+p.title+'"')
+                        # email notification to ADMIN users
+                        admin_emails = get_admin_emails()
+                        email = EmailMessage('[CSCC Action Required] Ticket Review', 'A Ticket has been submitted with meeting details; review and approval needed.\n \nCSCC Auto-Notifications', to=admin_emails)
+                        email.send()
                         return HttpResponseRedirect('/coach/home/')
                 else:
                     vid_url = TicketVideoURL()
@@ -624,7 +651,7 @@ def handle_uploaded_file(file):
 def report_coach(request):
     if not request.user.groups.filter(name="coach").exists():
         return HttpResponseRedirect('/no_access/')
-    admin_email = "cscc-admin@mit.edu"
+    admin_email = get_admin_emails()
     if request.method == 'POST':
         form = EmailAdminForm(request.POST)
         if form.is_valid():
@@ -640,7 +667,7 @@ def report_coach(request):
 def report_tutee(request):
     if not request.user.groups.filter(name="tutee").exists():
         return HttpResponseRedirect('/no_access/')
-    admin_email = "cscc-admin@mit.edu"
+    admin_email = get_admin_emails()
     if request.method == 'POST':
         form = EmailAdmin(request.POST)
         if form.is_valid():
